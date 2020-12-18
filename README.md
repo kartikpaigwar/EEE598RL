@@ -1,0 +1,1 @@
+This is a Gym Environment for MIT Mini Cheetah.
