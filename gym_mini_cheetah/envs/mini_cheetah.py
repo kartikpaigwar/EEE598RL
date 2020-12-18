@@ -31,7 +31,7 @@ class MiniCheetahEnv(gym.Env):
 				 on_rack=False,
 				 gait='trot',
 				 phase=[0, no_of_points, no_of_points, 0],  # [FR, FL, BR, BL]
-				 action_dim=8,
+				 action_dim=4,
 				 end_steps=1000,
 				 stairs=False,
 				 downhill=False,
@@ -64,8 +64,8 @@ class MiniCheetahEnv(gym.Env):
         self._kp = 500
         self._kd = 50
 
-        self.dt = 0.05
-        self._frame_skip = 25
+        self.dt = 0.002
+        self._frame_skip = 5
         self._n_steps = 0
         self._action_dim = action_dim
 
@@ -94,38 +94,11 @@ class MiniCheetahEnv(gym.Env):
 
         self.linearV = 0
         self.angV = 0
-        self.prev_vel = [0, 0, 0]
-
-        self.x_f = 0
-        self.y_f = 0
-
-        self.clips = 100
-
         self.friction = 0.7
-        self.ori_history_length = 3
-        self.ori_history_queue = deque([0] * 3 * self.ori_history_length,
-                                       maxlen=3 * self.ori_history_length)  # observation queue
-
-        self.step_disp = deque([0] * 100, maxlen=100)
-        self.stride = 5
-
-        self.incline_deg = deg
-        self.incline_ori = 0
-
-        self.prev_incline_vec = (0, 0, 1)
-        self.prev_feet_points = np.ndarray((5,3))
-        self.terrain_pitch = []
-        self.add_IMU_noise = IMU_Noise
 
         self.INIT_POSITION = [0, 0, 0.45]
         self.INIT_ORIENTATION = [0, 0, 0, 1]
 
-        self.support_plane_estimated_pitch = 0
-        self.support_plane_estimated_roll = 0
-
-        self.pertub_steps = 0
-        self.x_f = 0
-        self.y_f = 0
 
         ## Gym env related mandatory variables
         observation_high = np.array([np.pi / 2] * self._obs_dim)
@@ -157,7 +130,7 @@ class MiniCheetahEnv(gym.Env):
 
         self._joint_name_to_id, self._motor_id_list, self._motor_names = self.BuildMotorIdList()
 
-        self.ResetLeg()
+        self.ResetLeg(reset_duration=1)
 
         if self._on_rack:
             self._pybullet_client.createConstraint(
@@ -225,7 +198,7 @@ class MiniCheetahEnv(gym.Env):
 
         return joint_name_to_id, motor_id_list, MOTOR_NAMES
 
-    def ResetLeg(self, reset_duration = 200):
+    def ResetLeg(self, reset_duration = 150):
         '''
 		function to reset hip and knee joints' state
 		Args:
@@ -247,7 +220,7 @@ class MiniCheetahEnv(gym.Env):
 
         for t in range(reset_duration):
             if t < reset_duration - 1:
-                standing_motor_force = 70
+                standing_motor_force = 100
             else:
                 standing_motor_force = 0
             for id in self._motor_id_list:
@@ -280,7 +253,8 @@ class MiniCheetahEnv(gym.Env):
             bodyIndex=self.MiniCheetah,
             jointIndex=motor_id,
             controlMode=self._pybullet_client.POSITION_CONTROL,
-            targetPosition= position
+            targetPosition= position,
+            force = 100
         )
 
     def GetObservation(self):
@@ -334,14 +308,18 @@ class MiniCheetahEnv(gym.Env):
 
     def transform_action(self, action):
         action = np.clip(action, -1, 1)
-        action = action * 30
-        return action
+        action[0] = action[0]*math.radians(60) - math.radians(60)
+        action[2] = action[2] * math.radians(60) - math.radians(60)
+        action[1] = (action[1] + 1)/2 * math.radians(60) + math.radians(90)
+        action[3] = (action[3] +1)/2* math.radians(60) + math.radians(90)
+        aug_action = np.array([action[0], action[1], action[2], action[3],action[2], action[3], action[0], action[1]])
+        return aug_action
 
     def do_simulation(self, action, n_frames):
         abd_motor_ids = [0,4,8,12]
         for _ in range(n_frames):
-            for motor_id, motor_torque in zip(self._motor_id_list,action):
-                self.SetMotorTorqueById(motor_id, motor_torque)
+            for motor_id, motor_angle in zip(self._motor_id_list,action):
+                self.SetMotorPositionById(motor_id, motor_angle)
             for abd_id in abd_motor_ids:
                 self.SetMotorPositionById(abd_id,0)
             self._pybullet_client.stepSimulation()
@@ -419,6 +397,6 @@ class MiniCheetahEnv(gym.Env):
 
 # env = MiniCheetahEnv(render=True, on_rack=False)
 # env.reset()
-# for _ in range(400):
-#     action = np.ones(8) * 0.5
+# for _ in range(1000):
+#     action = np.ones(4)*0.5
 #     env.step(action)
