@@ -65,7 +65,7 @@ class MiniCheetahEnv(gym.Env):
         self._kd = 50
 
         self.dt = 0.002
-        self._frame_skip = 5
+        self._frame_skip = 30
         self._n_steps = 0
         self._action_dim = action_dim
 
@@ -308,10 +308,10 @@ class MiniCheetahEnv(gym.Env):
 
     def transform_action(self, action):
         action = np.clip(action, -1, 1)
-        action[0] = action[0]*math.radians(60) - math.radians(60)
-        action[2] = action[2] * math.radians(60) - math.radians(60)
-        action[1] = (action[1] + 1)/2 * math.radians(60) + math.radians(90)
-        action[3] = (action[3] +1)/2* math.radians(60) + math.radians(90)
+        action[0] = action[0]*math.radians(30) - math.radians(60)
+        action[2] = action[2] * math.radians(30) - math.radians(60)
+        action[1] = (action[1] + 1)/2 * math.radians(100) + math.radians(50)
+        action[3] = (action[3] +1)/2* math.radians(100) + math.radians(50)
         aug_action = np.array([action[0], action[1], action[2], action[3],action[2], action[3], action[0], action[1]])
         return aug_action
 
@@ -398,5 +398,5 @@ class MiniCheetahEnv(gym.Env):
 # env = MiniCheetahEnv(render=True, on_rack=False)
 # env.reset()
 # for _ in range(1000):
-#     action = np.ones(4)*0.5
+#     action = np.ones(4)*0
 #     env.step(action)

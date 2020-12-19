@@ -9,7 +9,7 @@ PI = np.pi
 
 
 
-policy = np.load("experiments/12Dec1/iterations/best_policy.npy")
+policy = np.load("experiments/19Dec1/iterations/best_policy.npy")
 
 rpy_accurate = []
 rpy_noisy = []
@@ -31,7 +31,7 @@ if __name__ == '__main__':
 	if(args.WedgeIncline == 0):
 		WedgePresent = False
 	
-	env = e.MiniCheetahEnv(render=True, on_rack=False, gait = 'trot')
+	env = e.MiniCheetahEnv(render=True, on_rack=True, gait = 'trot')
 	steps = 0
 	t_r = 0
 
