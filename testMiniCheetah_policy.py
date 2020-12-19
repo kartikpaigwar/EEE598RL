@@ -9,7 +9,7 @@ PI = np.pi
 
 
 
-policy = np.load("experiments/19Dec1/iterations/best_policy.npy")
+policy = np.load("experiments/12Dec1/iterations/best_policy.npy")
 
 rpy_accurate = []
 rpy_noisy = []
@@ -24,14 +24,14 @@ if __name__ == '__main__':
 	parser.add_argument('--MotorStrength', help='maximum motor Strength to be applied', type=float, default=7.0)
 	parser.add_argument('--RandomTest', help='flag to sample test values randomly ', type=bool, default=False)
 	parser.add_argument('--seed', help='seed for the random sampling', type=float, default=100)
-	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=1000)
+	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=800)
 
 	args = parser.parse_args()
 	WedgePresent = False
 	if(args.WedgeIncline == 0):
 		WedgePresent = False
 	
-	env = e.MiniCheetahEnv(render=True, on_rack=True, gait = 'trot')
+	env = e.MiniCheetahEnv(render=True, on_rack=False, gait = 'trot')
 	steps = 0
 	t_r = 0
 
