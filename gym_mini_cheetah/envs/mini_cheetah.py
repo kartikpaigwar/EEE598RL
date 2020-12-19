@@ -220,7 +220,7 @@ class MiniCheetahEnv(gym.Env):
 
         for t in range(reset_duration):
             if t < reset_duration - 1:
-                standing_motor_force = 100
+                standing_motor_force = 17
             else:
                 standing_motor_force = 0
             for id in self._motor_id_list:
@@ -254,7 +254,7 @@ class MiniCheetahEnv(gym.Env):
             jointIndex=motor_id,
             controlMode=self._pybullet_client.POSITION_CONTROL,
             targetPosition= position,
-            force = 20
+            force = 8
         )
 
     def GetObservation(self):
