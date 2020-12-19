@@ -385,7 +385,7 @@ class MiniCheetahEnv(gym.Env):
 
         step_distance_x = (x - x_l)
 
-        done = False#self._termination(pos, ori)
+        done = self._termination(pos, ori)
         if done:
             reward = 0
         else:

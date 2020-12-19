@@ -24,7 +24,7 @@ if __name__ == '__main__':
 	parser.add_argument('--MotorStrength', help='maximum motor Strength to be applied', type=float, default=7.0)
 	parser.add_argument('--RandomTest', help='flag to sample test values randomly ', type=bool, default=False)
 	parser.add_argument('--seed', help='seed for the random sampling', type=float, default=100)
-	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=800)
+	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=1000)
 
 	args = parser.parse_args()
 	WedgePresent = False
