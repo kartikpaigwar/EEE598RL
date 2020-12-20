@@ -1,1 +1,1 @@
-python3 trainMiniCheetahARS.py --lr 0.03 --noise 0.03 --directions 3 --gait trot --logdir 19Dec1  --action_dim 4 --msg "Training cheetah" --episode_length 1000 --normal 1
+python3 trainMiniCheetahARS.py --lr 0.05 --noise 0.003 --directions 2 --gait trot --logdir 20Dec6 --action_dim 4 --msg "proportion" --episode_length 800 --normal 0

@@ -64,12 +64,12 @@ class MiniCheetahEnv(gym.Env):
         self._kp = 500
         self._kd = 50
 
-        self.dt = 0.002
-        self._frame_skip = 30
+        self.dt = 0.005
+        self._frame_skip = 25
         self._n_steps = 0
         self._action_dim = action_dim
 
-        self._obs_dim = 10
+        self._obs_dim = 8
 
         self.action = np.zeros(self._action_dim)
 
@@ -208,9 +208,9 @@ class MiniCheetahEnv(gym.Env):
 		'''
         for i in range(8):
             if i%2 == 0:
-                joint_reset_angle = -1*math.radians(60)
+                joint_reset_angle = -1*math.radians(50)
             elif i%2 ==1:
-                joint_reset_angle = math.radians(120)
+                joint_reset_angle = math.radians(110)
 
 
             self._pybullet_client.resetJointState(
@@ -254,9 +254,29 @@ class MiniCheetahEnv(gym.Env):
             jointIndex=motor_id,
             controlMode=self._pybullet_client.POSITION_CONTROL,
             targetPosition= position,
-            force = 8
+            force = 17,
+            positionGain = 300,
+            velocityGain = 20
         )
+    def _apply_pd_control(self, motor_commands, motor_vel_commands):
+        '''
+        Apply PD control to reach desired motor position commands
+        Ret:
+            applied_motor_torque : array of applied motor torque values in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA]
+        '''
+        self._kp = 300
+        self._kd = 20
+        qpos_act = self.GetMotorAngles()
+        qvel_act = self.GetMotorVelocities()
+        applied_motor_torque = self._kp * (motor_commands - qpos_act) + self._kd * (motor_vel_commands - qvel_act)
 
+        motor_strength = 12
+        applied_motor_torque = np.clip(np.array(applied_motor_torque), -motor_strength, motor_strength)
+        applied_motor_torque = applied_motor_torque.tolist()
+
+        for motor_id, motor_torque in zip(self._motor_id_list, applied_motor_torque):
+            self.SetMotorTorqueById(motor_id, motor_torque)
+        return applied_motor_torque
     def GetObservation(self):
         '''
         This function returns the current observation of the environment for the interested task
@@ -267,8 +287,9 @@ class MiniCheetahEnv(gym.Env):
         motor_angles = self.GetMotorAngles()
         RPY = self._pybullet_client.getEulerFromQuaternion(ori)
         RPY = np.round(RPY, 5)
-
-        obs = np.concatenate((motor_angles, [RPY[0], RPY[1]])).ravel()
+        ang_vel = self.GetBaseAngularVelocity()
+        lin_vel = self.GetBaseLinearVelocity()
+        obs = np.concatenate(([pos[2]], lin_vel,[ang_vel[0], ang_vel[1]], [RPY[0], RPY[1]])).ravel()
 
         return obs
 
@@ -280,12 +301,36 @@ class MiniCheetahEnv(gym.Env):
         motor_ang = [self._pybullet_client.getJointState(self.MiniCheetah, motor_id)[0] for motor_id in self._motor_id_list]
         return motor_ang
 
+    def GetMotorVelocities(self):
+        '''
+        This function returns the current joint velocities in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA ]
+        '''
+        motor_vel = [self._pybullet_client.getJointState(self.MiniCheetah, motor_id)[1] for motor_id in
+                     self._motor_id_list]
+        return motor_vel
+
     def GetBasePosAndOrientation(self):
         '''
         This function returns the robot torso position(X,Y,Z) and orientation(Quaternions) in world frame
         '''
         position, orientation = (self._pybullet_client.getBasePositionAndOrientation(self.MiniCheetah))
         return position, orientation
+
+    def GetBaseAngularVelocity(self):
+        '''
+        This function returns the robot base angular velocity in world frame
+        Ret: list of 3 floats
+        '''
+        basevelocity = self._pybullet_client.getBaseVelocity(self.MiniCheetah)
+        return basevelocity[1]
+
+    def GetBaseLinearVelocity(self):
+        '''
+        This function returns the robot base linear velocity in world frame
+        Ret: list of 3 floats
+        '''
+        basevelocity = self._pybullet_client.getBaseVelocity(self.MiniCheetah)
+        return basevelocity[0]
 
     def step(self, action):
         '''
@@ -318,8 +363,9 @@ class MiniCheetahEnv(gym.Env):
     def do_simulation(self, action, n_frames):
         abd_motor_ids = [0,4,8,12]
         for _ in range(n_frames):
-            for motor_id, motor_angle in zip(self._motor_id_list,action):
-                self.SetMotorPositionById(motor_id, motor_angle)
+            _ = self._apply_pd_control(action, np.zeros(8))
+            # for motor_id, motor_angle in zip(self._motor_id_list,action):
+            #     self.SetMotorPositionById(motor_id, motor_angle)
             for abd_id in abd_motor_ids:
                 self.SetMotorPositionById(abd_id,0)
             self._pybullet_client.stepSimulation()
@@ -372,25 +418,30 @@ class MiniCheetahEnv(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.21
+        desired_height = 0.25
 
-        roll_reward = np.exp(-5 * ((RPY[0] ) ** 2))
-        pitch_reward = np.exp(-5 * ((RPY[1]) ** 2))
+        roll_reward = np.exp(-15 * ((RPY[0] ) ** 2))
+        pitch_reward = np.exp(-20 * ((RPY[1]) ** 2))
         yaw_reward = np.exp(-30 * (RPY[2] ** 2))
-        height_reward = np.exp(-20 * (desired_height - current_height) ** 2)
+        height_reward = np.exp(-200 * (desired_height - current_height) ** 2)
 
         x = pos[0]
         x_l = self._last_base_position[0]
         self._last_base_position = pos
 
         step_distance_x = (x - x_l)
+        penalty = 0
+
+        if abs(step_distance_x) <= 0.00002:
+            penalty = 1
+
 
         done = self._termination(pos, ori)
         if done:
             reward = 0
         else:
-            reward = round(pitch_reward, 4) + round(roll_reward, 4) \
-                     + round(height_reward, 4) + 300 * round(step_distance_x, 4)
+            reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
+                     10000 * round(step_distance_x, 4) - penalty
 
         return reward, done
 
@@ -398,5 +449,6 @@ class MiniCheetahEnv(gym.Env):
 # env = MiniCheetahEnv(render=True, on_rack=False)
 # env.reset()
 # for _ in range(1000):
-#     action = np.ones(4)*0
+#     action =  np.ones(4)*0
 #     env.step(action)
+

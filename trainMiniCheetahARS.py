@@ -108,6 +108,8 @@ def ExploreWorker(rank, childPipe, envname, args):
             while num_plays < hp.episode_length:
                 action = policy.evaluate(state, delta, direction, hp)
                 state, reward, done, _ = env.step(action)
+                if done:
+                    break
                 sum_rewards += reward
                 num_plays += 1
             childPipe.send([sum_rewards, num_plays])
@@ -167,6 +169,8 @@ def explore(env, policy, direction, delta, hp):
     while num_plays < hp.episode_length:
         action = policy.evaluate(state, delta, direction, hp)
         state, reward, done, _ = env.step(action)
+        if done:
+            break
         sum_rewards += reward
         num_plays += 1
     return sum_rewards
