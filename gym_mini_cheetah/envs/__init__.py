@@ -1,1 +1,2 @@
 from gym_mini_cheetah.envs.mini_cheetah_env import MiniCheetahEnv
+import gym_mini_cheetah.envs.bullet_client as bullet_client

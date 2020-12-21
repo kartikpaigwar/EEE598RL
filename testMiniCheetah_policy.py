@@ -9,7 +9,7 @@ PI = np.pi
 
 
 
-policy = np.load("experiments/12Dec1/iterations/best_policy.npy")
+policy = np.load("experiments/20Dec5/iterations/policy_40.npy")
 
 rpy_accurate = []
 rpy_noisy = []

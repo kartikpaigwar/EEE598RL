@@ -270,7 +270,7 @@ class MiniCheetahEnv(gym.Env):
         qvel_act = self.GetMotorVelocities()
         applied_motor_torque = self._kp * (motor_commands - qpos_act) + self._kd * (motor_vel_commands - qvel_act)
 
-        motor_strength = 14
+        motor_strength = 15
         applied_motor_torque = np.clip(np.array(applied_motor_torque), -motor_strength, motor_strength)
         applied_motor_torque = applied_motor_torque.tolist()
 
