@@ -270,7 +270,7 @@ class MiniCheetahEnv(gym.Env):
         qvel_act = self.GetMotorVelocities()
         applied_motor_torque = self._kp * (motor_commands - qpos_act) + self._kd * (motor_vel_commands - qvel_act)
 
-        motor_strength = 15
+        motor_strength = 14
         applied_motor_torque = np.clip(np.array(applied_motor_torque), -motor_strength, motor_strength)
         applied_motor_torque = applied_motor_torque.tolist()
 
@@ -390,7 +390,7 @@ class MiniCheetahEnv(gym.Env):
                 print('Oops, Robot about to fall sideways! Terminated')
                 done = True
 
-            if abs(RPY[1]) > math.radians(50):
+            if abs(RPY[1]) > math.radians(40):
                 print('Oops, Robot doing wheely! Terminated')
                 done = True
 
@@ -423,7 +423,7 @@ class MiniCheetahEnv(gym.Env):
         roll_reward = np.exp(-20 * ((RPY[0] ) ** 2))
         pitch_reward = np.exp(-35 * ((RPY[1]) ** 2))
         yaw_reward = np.exp(-30 * (RPY[2] ** 2))
-        height_reward = np.exp(-300 * (desired_height - current_height) ** 2)
+        height_reward = np.exp(-350 * (desired_height - current_height) ** 2)
 
         x = pos[0]
         x_l = self._last_base_position[0]
@@ -441,7 +441,7 @@ class MiniCheetahEnv(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     800 * round(step_distance_x, 4) - penalty
+                     150 * round(step_distance_x, 4) - penalty*0.5
         # print(pitch_reward, roll_reward,height_reward)
 
         return reward, done

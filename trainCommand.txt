@@ -1,1 +1,1 @@
-python3 trainMiniCheetahARS.py --lr 0.04 --noise 0.03 --directions 2 --gait trot --logdir 20Dec9 --action_dim 4 --msg "tunned tight rewards" --episode_length 800 --normal 0
+python3 trainMiniCheetahARS.py --lr 0.04 --noise 0.03 --directions 2 --gait trot --logdir 21Dec1 --action_dim 4 --msg "tunned tight rewards" --episode_length 800 --normal 0
