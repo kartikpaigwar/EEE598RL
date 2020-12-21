@@ -270,7 +270,7 @@ class MiniCheetahEnv(gym.Env):
         qvel_act = self.GetMotorVelocities()
         applied_motor_torque = self._kp * (motor_commands - qpos_act) + self._kd * (motor_vel_commands - qvel_act)
 
-        motor_strength = 12
+        motor_strength = 15
         applied_motor_torque = np.clip(np.array(applied_motor_torque), -motor_strength, motor_strength)
         applied_motor_torque = applied_motor_torque.tolist()
 
@@ -353,8 +353,8 @@ class MiniCheetahEnv(gym.Env):
 
     def transform_action(self, action):
         action = np.clip(action, -1, 1)
-        action[0] = action[0]*math.radians(30) - math.radians(60)
-        action[2] = action[2] * math.radians(30) - math.radians(60)
+        action[0] = action[0]*math.radians(35) - math.radians(50)
+        action[2] = action[2] * math.radians(35) - math.radians(50)
         action[1] = (action[1] + 1)/2 * math.radians(100) + math.radians(50)
         action[3] = (action[3] +1)/2* math.radians(100) + math.radians(50)
         aug_action = np.array([action[0], action[1], action[2], action[3],action[2], action[3], action[0], action[1]])
@@ -394,7 +394,7 @@ class MiniCheetahEnv(gym.Env):
                 print('Oops, Robot doing wheely! Terminated')
                 done = True
 
-            if pos[2] > 0.7 :
+            if pos[2] > 0.5 :
                 print('Robot was too high! Terminated')
                 done = True
             if pos[2] < 0.08 :
@@ -418,12 +418,12 @@ class MiniCheetahEnv(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.25
+        desired_height = 0.24
 
-        roll_reward = np.exp(-15 * ((RPY[0] ) ** 2))
-        pitch_reward = np.exp(-20 * ((RPY[1]) ** 2))
+        roll_reward = np.exp(-20 * ((RPY[0] ) ** 2))
+        pitch_reward = np.exp(-35 * ((RPY[1]) ** 2))
         yaw_reward = np.exp(-30 * (RPY[2] ** 2))
-        height_reward = np.exp(-200 * (desired_height - current_height) ** 2)
+        height_reward = np.exp(-300 * (desired_height - current_height) ** 2)
 
         x = pos[0]
         x_l = self._last_base_position[0]
@@ -432,7 +432,7 @@ class MiniCheetahEnv(gym.Env):
         step_distance_x = (x - x_l)
         penalty = 0
 
-        if abs(step_distance_x) <= 0.00002:
+        if abs(step_distance_x) <= 0.00003:
             penalty = 1
 
 
@@ -441,7 +441,8 @@ class MiniCheetahEnv(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     10000 * round(step_distance_x, 4) - penalty
+                     800 * round(step_distance_x, 4) - penalty
+        # print(pitch_reward, roll_reward,height_reward)
 
         return reward, done
 
@@ -451,4 +452,5 @@ class MiniCheetahEnv(gym.Env):
 # for _ in range(1000):
 #     action =  np.ones(4)*0
 #     env.step(action)
+
 
