@@ -315,7 +315,7 @@ if __name__ == "__main__":
     print("log dir", args.logdir)
     hp.logdir = args.logdir
     np.random.seed(hp.seed)
-    max_processes = 4
+    max_processes = hp.n_envs
     parentPipes = None
     if args.mp:
         num_processes = min([hp.nb_directions, max_processes])
