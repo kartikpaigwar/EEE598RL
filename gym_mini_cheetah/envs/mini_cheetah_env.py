@@ -5,9 +5,6 @@ import numpy as np
 import math
 import pybullet
 import gym_mini_cheetah.envs.mini_cheetah as robot
-import utils.bullet_client as bullet_client
-import pybullet_data
-
 
 class MiniCheetahEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -51,7 +48,7 @@ class MiniCheetahEnv(gym.Env):
         obs : [R(t-2), P(t-2), Y(t-2), R(t-1), P(t-1), Y(t-1), R(t), P(t), Y(t), estimated support plane (roll, pitch) ]
     '''
         pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
-        motor_angles = self.GetMotorAngles()
+        motor_angles = self.mini_cheetah.GetMotorAngles()
         RPY = pybullet.getEulerFromQuaternion(ori)
         RPY = np.round(RPY, 4)
         ang_vel = self.mini_cheetah.GetBaseAngularVelocity()
@@ -71,7 +68,7 @@ class MiniCheetahEnv(gym.Env):
         done       : whether the step terminates the env
         {}	   : any information of the env (will be added later)
     '''
-        action = self.transform_action(action)
+        action = self.transform_action_2_motor_commands(action)
 
         self.mini_cheetah.do_simulation()
 
@@ -79,12 +76,12 @@ class MiniCheetahEnv(gym.Env):
         reward, done = self._get_reward()
         return ob, reward, done, {}
 
-    def transform_action_motor_commands(self, action):
+    def transform_action_2_motor_commands(self, action):
         action = np.clip(action, -1, 1)
-        action[0] = action[0] * math.radians(35) - math.radians(50)
-        action[2] = action[2] * math.radians(35) - math.radians(50)
-        action[1] = (action[1] + 1) / 2 * math.radians(100) + math.radians(50)
-        action[3] = (action[3] + 1) / 2 * math.radians(100) + math.radians(50)
+        action[0] = action[0] * math.radians(40) - math.radians(50)
+        action[2] = action[2] * math.radians(40) - math.radians(50)
+        action[1] = (action[1] + 1) / 2 * math.radians(80) + math.radians(50)
+        action[3] = (action[3] + 1) / 2 * math.radians(80) + math.radians(50)
 
         for leg in self.mini_cheetah.legs:
             leg.abduction_motor_angle = 0
@@ -105,9 +102,9 @@ class MiniCheetahEnv(gym.Env):
 
     '''
 
-        pos, ori = self.GetBasePosAndOrientation()
+        pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
 
-        RPY_orig = self._pybullet_client.getEulerFromQuaternion(ori)
+        RPY_orig = pybullet.getEulerFromQuaternion(ori)
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
@@ -126,16 +123,18 @@ class MiniCheetahEnv(gym.Env):
         penalty = 0
 
         if abs(step_distance_x) <= 0.00003:
-            penalty = 1
-
-        done = self._termination(pos, ori)
+            penalty = 0.5
+        step_distance_x_reward = np.clip(200*step_distance_x,-1,1)
+        done = self.mini_cheetah._termination()
         if done:
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     200 * round(step_distance_x, 4) - penalty * 0.5
+                     round(step_distance_x_reward, 4) - penalty
         # print(pitch_reward, roll_reward,height_reward)
 
         return reward, done
 
-
+    def render(self, mode="rgb_array", close=False):
+        render_array = self.mini_cheetah.render(mode,close)
+        return render_array

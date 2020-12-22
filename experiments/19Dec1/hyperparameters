@@ -1,8 +1,0 @@
-learning_rate: 0.03
-noise: 0.03
-env_name: Laikago-v0
-episode_length: 1000.0
-direction ratio: 3.076923076923077
-Normal initialization: 1
-Gait: trot
-Training cheetah
