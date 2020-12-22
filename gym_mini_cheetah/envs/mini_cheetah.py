@@ -147,7 +147,6 @@ class MiniCheetah():
             motor_id_list.append(leg.hip_motor_id)
             motor_id_list.append(leg.knee_motor_id)
 
-
         return joint_name_to_id, motor_id_list
 
     def ResetLeg(self, reset_duration=150):
@@ -297,6 +296,7 @@ class MiniCheetah():
         velocity_commands = np.zeros(12)
         for _ in range(self._frame_skip):
             applied_motor_torques = self._apply_pd_control(motor_commands, velocity_commands)
+            self._pybullet_client.stepSimulation()
         self._n_steps += 1
 
     def _termination(self):

@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	for i_step in range(args.EpisodeLength):
 
 		action = policy.dot(state)
-		state, r, _, angle = env.step(np.array(action))
+		state, r,done, [] = env.step(np.array(action))
 		t_r += r
 
 	print("Total_reward "+ str(t_r))

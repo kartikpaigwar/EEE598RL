@@ -1,9 +1,9 @@
 import gym
 from gym import spaces
-import gym_mini_cheetah
 import numpy as np
 import math
 import pybullet
+
 
 class MiniCheetahEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -15,7 +15,6 @@ class MiniCheetahEnv(gym.Env):
                  ):
 
         import gym_mini_cheetah.envs.mini_cheetah as robot
-
         self.mini_cheetah = robot.MiniCheetah(render=render, on_rack=on_rack,end_steps=end_steps)
 
         self._action_dim = 4
@@ -68,7 +67,7 @@ class MiniCheetahEnv(gym.Env):
         done       : whether the step terminates the env
         {}	   : any information of the env (will be added later)
     '''
-        action = self.transform_action_2_motor_commands(action)
+        self.transform_action_2_motor_commands(action)
 
         self.mini_cheetah.do_simulation()
 
