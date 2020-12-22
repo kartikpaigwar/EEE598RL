@@ -1,10 +1,9 @@
 import gym
 from gym import spaces
-
+import gym_mini_cheetah
 import numpy as np
 import math
 import pybullet
-import gym_mini_cheetah.envs.mini_cheetah as robot
 
 class MiniCheetahEnv(gym.Env):
     metadata = {'render.modes': ['human']}
@@ -15,6 +14,7 @@ class MiniCheetahEnv(gym.Env):
                  end_steps=800
                  ):
 
+        import gym_mini_cheetah.envs.mini_cheetah as robot
 
         self.mini_cheetah = robot.MiniCheetah(render=render, on_rack=on_rack,end_steps=end_steps)
 
@@ -116,7 +116,7 @@ class MiniCheetahEnv(gym.Env):
         height_reward = np.exp(-350 * (desired_height - current_height) ** 2)
 
         x = pos[0]
-        x_l = self._last_base_position[0]
+        x_l = self.mini_cheetah._last_base_position[0]
         self._last_base_position = pos
 
         step_distance_x = (x - x_l)
@@ -130,7 +130,7 @@ class MiniCheetahEnv(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     round(step_distance_x_reward, 4) - penalty
+                     step_distance_x_reward - penalty
         # print(pitch_reward, roll_reward,height_reward)
 
         return reward, done

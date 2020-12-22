@@ -127,18 +127,18 @@ class MiniCheetah():
         self.front_right.toe_joint_id = joint_name_to_id["toe_fr_joint"]
 
         self.front_left.abduction_motor_id = joint_name_to_id["torso_to_abduct_fl_j"]
-        self.front_left.hip_motor_id = joint_name_to_id["abduct_fr_to_thigh_fl_j"]
-        self.front_left.knee_motor_id = joint_name_to_id["thigh_fr_to_knee_fl_j"]
+        self.front_left.hip_motor_id = joint_name_to_id["abduct_fl_to_thigh_fl_j"]
+        self.front_left.knee_motor_id = joint_name_to_id["thigh_fl_to_knee_fl_j"]
         self.front_left.toe_joint_id = joint_name_to_id["toe_fl_joint"]
 
         self.back_right.abduction_motor_id = joint_name_to_id["torso_to_abduct_hr_j"]
-        self.back_right.hip_motor_id = joint_name_to_id["abduct_fr_to_thigh_hr_j"]
-        self.back_right.knee_motor_id = joint_name_to_id["thigh_fr_to_knee_hr_j"]
+        self.back_right.hip_motor_id = joint_name_to_id["abduct_hr_to_thigh_hr_j"]
+        self.back_right.knee_motor_id = joint_name_to_id["thigh_hr_to_knee_hr_j"]
         self.back_right.toe_joint_id = joint_name_to_id["toe_hr_joint"]
 
         self.back_left.abduction_motor_id = joint_name_to_id["torso_to_abduct_hl_j"]
-        self.back_left.hip_motor_id = joint_name_to_id["abduct_fr_to_thigh_hl_j"]
-        self.back_left.knee_motor_id = joint_name_to_id["thigh_fr_to_knee_hl_j"]
+        self.back_left.hip_motor_id = joint_name_to_id["abduct_hl_to_thigh_hl_j"]
+        self.back_left.knee_motor_id = joint_name_to_id["thigh_hl_to_knee_hl_j"]
         self.back_left.toe_joint_id = joint_name_to_id["toe_hl_joint"]
 
         motor_id_list = []
@@ -357,3 +357,4 @@ class MiniCheetah():
 
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
+
