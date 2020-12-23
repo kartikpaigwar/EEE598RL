@@ -1,1 +1,1 @@
-python3 train_policy_ARS.py --env mini_cheetah-v0 --n_envs 16 --lr 0.05 --noise 0.05 --directions 2  --logdir 23Dec2 --action_dim 4 --msg "env check" --episode_length 800 --random_init 0
+python3 train_policy_ARS.py --env mini_cheetah-v0 --n_envs 4 --lr 0.04 --noise 0.03 --directions 2  --logdir 23Dec2 --action_dim 4 --msg "env check" --episode_length 800 --random_init 0

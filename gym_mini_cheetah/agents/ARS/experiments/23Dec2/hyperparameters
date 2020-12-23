@@ -1,5 +1,5 @@
-learning_rate: 0.05
-noise: 0.05
+learning_rate: 0.04
+noise: 0.03
 env_name: mini_cheetah-v0
 episode_length: 800.0
 direction ratio: 2.0
