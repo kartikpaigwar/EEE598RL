@@ -116,7 +116,7 @@ class MiniCheetahEnv(gym.Env):
 
         x = pos[0]
         x_l = self.mini_cheetah._last_base_position[0]
-        self._last_base_position = pos
+        self.mini_cheetah._last_base_position = pos
 
         step_distance_x = (x - x_l)
         penalty = 0
@@ -130,7 +130,7 @@ class MiniCheetahEnv(gym.Env):
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
                      step_distance_x_reward - penalty
-        # print(pitch_reward, roll_reward,height_reward)
+        # print(pitch_reward, roll_reward,height_reward, step_distance_x_reward)
 
         return reward, done
 
