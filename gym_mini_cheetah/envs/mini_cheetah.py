@@ -21,7 +21,8 @@ RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
 
 class MiniCheetah():
-
+    """The MiniCheetah class that simulates a quadruped robot from MiT.
+    """
     def __init__(self,
                  render=False,
                  on_rack=False,
@@ -38,27 +39,26 @@ class MiniCheetah():
 
         self.termination_steps = end_steps
 
-        # PD gains
-        self._kp = 300
-        self._kd = 20
-
-        self.dt = 0.005
-        self._frame_skip = 25
+        self.dt = 0.005               #Control Time Step
+        self._frame_skip = 25         #Frames to Repeat Action
         self._n_steps = 0
 
+        # Reset position and orientation of the robot
+        self.INIT_POSITION = [0, 0, 0.35]
+        self.INIT_ORIENTATION = [0, 0, 0, 1]
         self._last_base_position = [0, 0, 0]
 
 
-        self.INIT_POSITION = [0, 0, 0.35]
-        self.INIT_ORIENTATION = [0, 0, 0, 1]
+        self._kp = 300                 #Position Gain
+        self._kd = 20                  #Velocity Gain
+        self.motor_strength = 15       #Peak Torque
 
-        self.motor_strength = 15
-        self.friction = 0.7
-
+        #Rendering Camera Parameters
         self._cam_dist = 1.3
         self._cam_yaw = 180
         self._cam_pitch = -40
 
+        #Instantiate dataclass for each leg [FR, FL, BR, BL]
         self.front_left = leg_data('fl')
         self.front_right = leg_data('fr')
         self.back_left = leg_data('bl')
@@ -71,11 +71,13 @@ class MiniCheetah():
         self.hard_reset()
 
     def hard_reset(self):
-        '''
-    Function to
-    1) Set simulation parameters which remains constant throughout the experiments
-    2) load urdf of plane and robot in initial conditions
-    '''
+        """
+        Function to
+        1) Set simulation parameters which remains constant throughout the experiments
+        2) load urdf of plane and robot in initial conditions
+        3) build motor ids list, joint name to ids dictionary
+        :return:
+        """
         self._pybullet_client.resetSimulation()
         self._pybullet_client.setPhysicsEngineParameter(numSolverIterations=int(300))
         self._pybullet_client.setTimeStep(self.dt / self._frame_skip)
@@ -90,7 +92,7 @@ class MiniCheetah():
 
         self._joint_name_to_id, self._motor_id_list = self.BuildMotorIdList()
 
-        self.ResetLeg(reset_duration=1)
+        self.ResetLegs(reset_duration=1)
 
         if self._on_rack:
             self._pybullet_client.createConstraint(
@@ -99,22 +101,25 @@ class MiniCheetah():
 
         self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, [0, 0, 0])
 
-    def reset(self):
-        self._last_base_position = [0, 0, 0]
+    def reset_robot(self):
+        """
+        Reset robot in standing posture at initial position and orientation
+        """
 
+        self._last_base_position = [0, 0, 0]
         self._pybullet_client.resetBasePositionAndOrientation(self.MiniCheetah, self.INIT_POSITION, self.INIT_ORIENTATION)
         self._pybullet_client.resetBaseVelocity(self.MiniCheetah, [0, 0, 0], [0, 0, 0])
-        self.ResetLeg()
+        self.ResetLegs()
         self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, [0, 0, 0])
         self._n_steps = 0
 
     def BuildMotorIdList(self):
-        '''
-    function to map joint_names with respective motor_ids as well as create a list of motor_ids
-    Ret:
-    joint_name_to_id : Dictionary of joint_name to motor_id
-    motor_id_list	 : List of joint_ids for respective motors in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA ]
-    '''
+        """
+        function to map joint_names with respective motor_ids as well as create a list of motor_ids
+        Ret:
+        joint_name_to_id : Dictionary of joint_name to motor_id
+        motor_id_list	 : List of joint_ids for respective motors in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA ]
+        """
         self.num_joints = self._pybullet_client.getNumJoints(self.MiniCheetah)
         joint_name_to_id = {}
         for i in range(self.num_joints):
@@ -149,15 +154,15 @@ class MiniCheetah():
 
         return joint_name_to_id, motor_id_list
 
-    def ResetLeg(self, reset_duration=150):
-        '''
-    function to reset hip and knee joints' state
-    Args:
-         leg_id 		  : denotes leg index
-         add_constraint   : bool to create constraints in lower joints of five bar leg mechanisim
-         standstilltorque : value of initial torque to set in hip and knee motors for standing condition
-    '''
+    def ResetLegs(self, reset_duration=150):
+        """
+        function to reset abduction, hip and knee joints' in standing posture
+        Args:
+             reset_duration   : simulation time steps until robot remain in standing posture
+
+        """
         for leg in self.legs:
+            # Precalculated joints angle of each leg in standing position
             leg.abduction_motor_angle = 0
             leg.hip_motor_angle = -1*math.radians(50)
             leg.knee_motor_angle = math.radians(110)
@@ -175,11 +180,13 @@ class MiniCheetah():
                 leg.knee_motor_id,
                 targetValue=leg.knee_motor_angle, targetVelocity=0)
 
-
         for t in range(reset_duration):
+
             if t < reset_duration - 1:
+                #Apply constant motor force to remain in standing position
                 standing_motor_force = 17
             else:
+                #Free joints once reset duration is over
                 standing_motor_force = 0
             for id in self._motor_id_list:
                 self._pybullet_client.setJointMotorControl2(
@@ -192,9 +199,12 @@ class MiniCheetah():
                 self._pybullet_client.stepSimulation()
 
     def SetMotorTorqueById(self, motor_id, torque):
-        '''
-    function to set motor torque for respective motor_id
-    '''
+        """
+        function to set motor torque for respective motor_id
+        :param motor_id: int
+        :param torque: float
+        """
+
         self._pybullet_client.setJointMotorControl2(
             bodyIndex=self.MiniCheetah,
             jointIndex=motor_id,
@@ -202,9 +212,11 @@ class MiniCheetah():
             force=torque)
 
     def SetMotorPositionById(self, motor_id, position):
-        '''
-    function to set motor torque for respective motor_id
-    '''
+        """
+        function to set motor position for respective motor_id
+        :param motor_id: int
+        :param position: radians
+        """
         self._pybullet_client.setJointMotorControl2(
             bodyIndex=self.MiniCheetah,
             jointIndex=motor_id,
@@ -216,11 +228,12 @@ class MiniCheetah():
         )
 
     def _apply_pd_control(self, motor_commands, motor_vel_commands):
-        '''
-    Apply PD control to reach desired motor position commands
-    Ret:
-        applied_motor_torque : array of applied motor torque values in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA]
-    '''
+        """
+        Apply PD control to reach desired motor position commands and velocity commands
+
+        Ret:
+        applied_motor_torque : array of applied motor torque values in order of motor_ids
+        """
 
         qpos_act = self.GetMotorAngles()
         qvel_act = self.GetMotorVelocities()
@@ -236,46 +249,50 @@ class MiniCheetah():
 
 
     def GetMotorAngles(self):
-        '''
-    This function returns the current joint angles in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA ]
-    '''
+        """
+        This function returns the current joint angles in order of  motor ids
+        """
         motor_ang = [self._pybullet_client.getJointState(self.MiniCheetah, motor_id)[0] for motor_id in
                      self._motor_id_list]
 
         return motor_ang
 
     def GetMotorVelocities(self):
-        '''
-    This function returns the current joint velocities in order [FLH FLK FRH FRK BLH BLK BRH BRK FLA FRA BLA BRA ]
-    '''
+        """
+        This function returns the current joint velocities in order of motor ids
+        """
         motor_vel = [self._pybullet_client.getJointState(self.MiniCheetah, motor_id)[1] for motor_id in
                      self._motor_id_list]
         return motor_vel
 
     def GetBasePosAndOrientation(self):
-        '''
-    This function returns the robot torso position(X,Y,Z) and orientation(Quaternions) in world frame
-    '''
+        """
+        This function returns the robot torso position(X,Y,Z) and orientation(Quaternions) in world frame
+        """
         position, orientation = (self._pybullet_client.getBasePositionAndOrientation(self.MiniCheetah))
         return position, orientation
 
     def GetBaseAngularVelocity(self):
-        '''
-    This function returns the robot base angular velocity in world frame
-    Ret: list of 3 floats
-    '''
+        """
+        This function returns the robot base angular velocity in world frame
+        Ret: list of 3 floats
+        """
         basevelocity = self._pybullet_client.getBaseVelocity(self.MiniCheetah)
         return basevelocity[1]
 
     def GetBaseLinearVelocity(self):
-        '''
-    This function returns the robot base linear velocity in world frame
-    Ret: list of 3 floats
-    '''
+        """
+        This function returns the robot base linear velocity in world frame
+        :return: list of 3 floats
+        """
         basevelocity = self._pybullet_client.getBaseVelocity(self.MiniCheetah)
         return basevelocity[0]
 
     def GetMotorCommands(self):
+        """
+        This is function used to retrieve motor_angles assigned in each of the leg dataclasses
+        :return:
+        """
         motor_commands = []
         for leg in self.legs:
             motor_commands.append(leg.abduction_motor_angle)
@@ -284,6 +301,11 @@ class MiniCheetah():
         return  np.array(motor_commands)
 
     def SetMotorCommands(self, motor_ang):
+        """
+        This is function used to assign motor_angles in each of the leg dataclasses
+        :param motor_ang: list of 12 motor angles in order of motor ids
+        :return: None
+        """
         leg_id = 0
         for leg in self.legs:
             leg.abduction_motor_angle = motor_ang[leg_id]
@@ -292,6 +314,10 @@ class MiniCheetah():
             leg_id += 1
 
     def do_simulation(self):
+        """
+        Function to simulate motor commands
+        :return: list of 12 torque values applied in each of the motors
+        """
         motor_commands = self.GetMotorCommands()
         velocity_commands = np.zeros(12)
         for _ in range(self._frame_skip):
@@ -300,15 +326,17 @@ class MiniCheetah():
         self._n_steps += 1
 
     def _termination(self):
-        '''
-    Check termination conditions of the environment
-    Args:
-        pos 		: current position of the robot's base in world frame
-        orientation : current orientation of robot's base (Quaternions) in world frame
-    Ret:
-        done 		: return True if termination conditions satisfied
-    '''
+        """
+        Check termination conditions of the environment
+        Args:
+            pos 		: current position of the robot's base in world frame
+            orientation : current orientation of robot's base (Quaternions) in world frame
+        Ret:
+            done 		: return True if termination conditions satisfied
+        """
+
         done = False
+        debug = False    # Debug with True for better intuition of the performance during the training
         pos, orientation = self.GetBasePosAndOrientation()
         RPY = self._pybullet_client.getEulerFromQuaternion(orientation)
 
@@ -316,23 +344,31 @@ class MiniCheetah():
             done = True
         else:
             if abs(RPY[0]) > math.radians(60):
-                print('Oops, Robot about to fall sideways! Terminated')
+                if debug:
+                    print('Oops, Robot about to fall sideways! Terminated')
                 done = True
 
             if abs(RPY[1]) > math.radians(50):
-                print('Oops, Robot doing wheely! Terminated')
+                if debug:
+                    print('Oops, Robot doing wheely! Terminated')
                 done = True
 
             if pos[2] > 0.5:
-                print('Robot was too high! Terminated')
+                if debug:
+                    print('Robot was too high! Terminated')
                 done = True
+
             if pos[2] < 0.08:
-                print('Robot was too low! Terminated')
+                if debug:
+                    print('Robot was too low! Terminated')
                 done = True
 
         return done
 
     def render(self, mode="rgb_array", close=False):
+        """
+        Need to verify. Currently, connecting GUI for rendering
+        """
         if mode != "rgb_array":
             return np.array([])
         base_pos, orn = self._pybullet_client.getBasePositionAndOrientation(self.MiniCheetah)

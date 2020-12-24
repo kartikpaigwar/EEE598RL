@@ -33,19 +33,21 @@ class MiniCheetahEnv(gym.Env):
 
 
     def reset(self):
-        '''
-    This function resets the environment
-    '''
-        self.mini_cheetah.reset()
+        """
+        This function resets the environment
+        """
+        self.mini_cheetah.reset_robot()
         return self.GetObservation()
 
 
     def GetObservation(self):
-        '''
-    This function returns the current observation of the environment for the interested task
-    Ret:
-        obs : [R(t-2), P(t-2), Y(t-2), R(t-1), P(t-1), Y(t-1), R(t), P(t), Y(t), estimated support plane (roll, pitch) ]
-    '''
+        """
+        This function returns the current observation of the environment for the interested task.
+        Obs_Dimension = 8
+
+        :return: [robot_z_pos, lin_vel_x, lin_vel_y, lin_vel_z, roll rate, pitch rate, roll, pitch]
+        """
+
         pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
         motor_angles = self.mini_cheetah.GetMotorAngles()
         RPY = pybullet.getEulerFromQuaternion(ori)
@@ -57,16 +59,16 @@ class MiniCheetahEnv(gym.Env):
         return obs
 
     def step(self, action):
-        '''
-    function to perform one step in the environment
-    Args:
-        action : array of action values
-    Ret:
+        """
+        function to perform one step in the environment
+        :param action: 4 dimension array of action values ranging from [-1,1]
+        :return:
         ob 	   : observation after taking step
         reward     : reward received after taking step
         done       : whether the step terminates the env
         {}	   : any information of the env (will be added later)
-    '''
+        """
+
         self.transform_action_2_motor_commands(action)
 
         self.mini_cheetah.do_simulation()
@@ -76,6 +78,11 @@ class MiniCheetahEnv(gym.Env):
         return ob, reward, done, {}
 
     def transform_action_2_motor_commands(self, action):
+        """
+        Transform normalized actions and map to corresponding motor angles of each leg
+        :param action: 4 dimension array of action values ranging from [-1,1]
+        :return: None
+        """
         action = np.clip(action, -1, 1)
         action[0] = action[0] * math.radians(40) - math.radians(50)
         action[2] = action[2] * math.radians(40) - math.radians(50)
@@ -93,13 +100,12 @@ class MiniCheetahEnv(gym.Env):
 
 
     def _get_reward(self):
-        '''
-    Calculates reward achieved by the robot for RPY stability, torso height criterion and forward distance moved on the slope:
-    Ret:
+        """
+        Calculates reward achieved by the robot for Roll Pitch stability, torso height criterion and forward distance moved :
+        :return:
         reward : reward achieved
         done   : return True if environment terminates
-
-    '''
+        """
 
         pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
 
@@ -111,26 +117,27 @@ class MiniCheetahEnv(gym.Env):
 
         roll_reward = np.exp(-20 * ((RPY[0]) ** 2))
         pitch_reward = np.exp(-35 * ((RPY[1]) ** 2))
-        yaw_reward = np.exp(-30 * (RPY[2] ** 2))
         height_reward = np.exp(-350 * (desired_height - current_height) ** 2)
 
+        #Calculate distance moved along x direction from its last position
         x = pos[0]
         x_l = self.mini_cheetah._last_base_position[0]
         self.mini_cheetah._last_base_position = pos
-
         step_distance_x = (x - x_l)
-        penalty = 0
+        step_distance_x_reward = np.clip(200*step_distance_x,-1,1) #clip reward between [-1,1]
 
+        # Penalize if the robot remains standstill
+        penalty = 0
         if abs(step_distance_x) <= 0.00003:
             penalty = 0.5
-        step_distance_x_reward = np.clip(200*step_distance_x,-1,1)
+
+        # Check if episode terminates
         done = self.mini_cheetah._termination()
         if done:
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
                      step_distance_x_reward - penalty
-        # print(pitch_reward, roll_reward,height_reward, step_distance_x_reward)
 
         return reward, done
 

@@ -9,11 +9,9 @@ import time
 import multiprocessing as mp
 from multiprocessing import Process, Pipe
 import argparse
-# Utils
 from utils.logger import DataLog
 from utils.make_train_plots import make_train_plots_ars
 import random
-# Registering new environments
 
 import numpy as np
 
@@ -41,9 +39,9 @@ class HyperParameters():
 
     def to_text(self, path):
         res_str = ''
+        res_str = res_str + 'env_name: ' + str(self.env_name) + '\n'
         res_str = res_str + 'learning_rate: ' + str(self.learning_rate) + '\n'
         res_str = res_str + 'noise: ' + str(self.noise) + '\n'
-        res_str = res_str + 'env_name: ' + str(self.env_name) + '\n'
         res_str = res_str + 'episode_length: ' + str(self.episode_length) + '\n'
         res_str = res_str + 'direction ratio: ' + str(self.nb_directions / self.nb_best_directions) + '\n'
         res_str = res_str + 'policy initialization: ' + str(self.random_init) + '\n'
