@@ -23,7 +23,7 @@ class HyperParameters():
     """
 
     def __init__(self, action_dim=4, random_init=True, msg='', nb_steps=10000,
-                 episode_length=1000, learning_rate=0.02, nb_directions=16, nb_best_directions=8, noise=0.03, seed=1,
+                 episode_length=800, learning_rate=0.02, nb_directions=16, nb_best_directions=8, noise=0.03, seed=1,
                  env_name='mini_cheetah-v0'):
         self.nb_steps = nb_steps
         self.episode_length = episode_length
@@ -277,9 +277,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--env', help='Gym environment name', type=str, default='mini_cheetah-v0')
     parser.add_argument('--seed', help='RNG seed', type=int, default=1234123)
-    parser.add_argument('--n_envs', help='number of parallel agents', type=int, default=4)
+    parser.add_argument('--n_envs', help='number of parallel agents', type=int, default=8)
     parser.add_argument('--render', help='OpenGL Visualizer', type=int, default=0)
-    parser.add_argument('--steps', help='Number of steps', type=int, default=10000)
+    parser.add_argument('--steps', help='Number of steps', type=int, default=500)
     parser.add_argument('--policy', help='Starting policy file (npy)', type=str, default='')
     parser.add_argument('--logdir', help='Directory root to log policy files (npy)', type=str, default='logdir_name')
     parser.add_argument('--mp', help='Enable multiprocessing', type=int, default=1)
@@ -287,11 +287,10 @@ if __name__ == "__main__":
     parser.add_argument('--lr', help='learning rate', type=float, default=0.05)
     parser.add_argument('--noise', help='noise hyperparameter', type=float, default=0.03)
     parser.add_argument('--episode_length', help='length of each episode', type=float, default=800)
-    parser.add_argument('--random_init', help='random_policy_initialization', type=int, default=1)
+    parser.add_argument('--random_init', help='random_policy_initialization', type=int, default=0)
     parser.add_argument('--msg', help='msg to save in a text file', type=str, default='')
     parser.add_argument('--action_dim', help='action space dimension', type=int,default=4)
     parser.add_argument('--directions', help='divising factor of total directions to use', type=int, default=2)
-    parser.add_argument('--eval_step', help='policy evaluation after how many steps should take place', type=int, default=3)
     args = parser.parse_args()
 
 
@@ -311,7 +310,6 @@ if __name__ == "__main__":
     hp.nb_best_directions = int(hp.nb_directions / args.directions)
     hp.random_init = args.random_init
     hp.action_dim = args.action_dim
-    hp.evalstep = args.eval_step
     print("log dir", args.logdir)
     hp.logdir = args.logdir
     np.random.seed(hp.seed)
