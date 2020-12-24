@@ -1,8 +1,0 @@
-learning_rate: 0.05
-noise: 0.03
-env_name: Laikago-v0
-episode_length: 800.0
-direction ratio: 2.0
-Normal initialization: 1
-Gait: trot
-proportion to distance and gauss

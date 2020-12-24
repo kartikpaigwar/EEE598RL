@@ -1,87 +1,105 @@
-import os
-
+import sys, os
 import gym
 import gym_mini_cheetah
-import numpy as np
-import matplotlib.pyplot as plt
-
+import argparse
 from stable_baselines3 import PPO
 from stable_baselines3.ppo import MlpPolicy
-from stable_baselines3.common import results_plotter
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.results_plotter import load_results, ts2xy
-from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
-from utils.vec_monitor import VecMonitor
 
-
-class SaveOnBestTrainingRewardCallback(BaseCallback):
+class HyperParameters():
     """
-    Callback for saving a model (the check is done every ``check_freq`` steps)
-    based on the training reward (in practice, we recommend using ``EvalCallback``).
-
-    :param check_freq: (int)
-    :param log_dir: (str) Path to the folder where the model will be saved.
-      It must contains the file created by the ``Monitor`` wrapper.
-    :param verbose: (int)
+    This class is basically a struct that contains all the hyperparameters that you want to tune
     """
-    def __init__(self, check_freq: int, log_dir: str, verbose=1):
-        super(SaveOnBestTrainingRewardCallback, self).__init__(verbose)
-        self.check_freq = check_freq
-        self.log_dir = log_dir
-        self.save_path = os.path.join(log_dir, 'trained_models')
-        self.best_mean_reward = -np.inf
 
-    def _init_callback(self) -> None:
-        # Create folder if needed
-        if self.save_path is not None:
-            os.makedirs(self.save_path, exist_ok=True)
+    def __init__(self, env = "", learning_rate=0.0003, n_steps=2048, n_envs = 8, batch_size=64, n_epochs=10,
+                  clip_range=0.2,  use_sde=False, sde_sample_freq=-1):
+        self.env =env
+        self.n_steps = n_steps
+        self.learning_rate = learning_rate
+        self.batch_size= batch_size
+        self.n_epochs = n_epochs
+        self.n_envs = n_envs
+        self.msg = "msg"
+        self.use_sde = use_sde
+        self.clip_range = clip_range
+        self.sde_sample_freq = sde_sample_freq
+        self.logdir = ""
 
-    def _on_step(self) -> bool:
-        if self.n_calls % self.check_freq == 0:
+    def to_text(self, path):
+        res_str = ''
+        res_str = res_str + 'env_name: ' + str(self.env) + '\n'
+        res_str = res_str + 'learning_rate: ' + str(self.learning_rate) + '\n'
+        res_str = res_str + 'n_epochs: ' + str(self.n_epochs) + '\n'
+        res_str = res_str + 'n_steps: ' + str(self.n_steps) + '\n'
+        res_str = res_str + 'n_envs: ' + str(self.n_envs) + '\n'
+        res_str = res_str + 'use_sde: ' + str(self.use_sde) + '\n'
+        res_str = res_str + 'sde_sample_frequency: ' + str(self.sde_sample_freq) + '\n'
+        res_str = res_str + 'clip_range: ' + str(self.clip_range) + '\n'
+        res_str = res_str + 'batch_size: ' + str(self.batch_size) + '\n'
 
-          # Retrieve training reward
-          x, y = ts2xy(load_results(self.log_dir), 'timesteps')
-          if len(x) > 0:
-              # Mean training reward over the last 100 episodes
-              mean_reward = np.mean(y[-100:])
-              if self.verbose > 0:
-                print("Num timesteps: {}".format(self.num_timesteps))
-                print("Best mean reward: {:.2f} - Last mean reward per episode: {:.2f}".format(self.best_mean_reward, mean_reward))
+        res_str = res_str + self.msg + '\n'
+        fileobj = open(path, 'w')
+        fileobj.write(res_str)
+        fileobj.close()
 
-              # New best model, you could save the agent here
-              if mean_reward > self.best_mean_reward:
-                  self.best_mean_reward = mean_reward
-                  # Example for saving best model
-                  if self.verbose > 0:
-                    print("Saving new best model to {}".format(self.save_path))
-                  self.model.save(self.save_path + "/best_model")
 
-        return True
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--env_name', help='name of the gym env', type=str, default='mini_cheetah-v0')
+parser.add_argument('--log_dir', help='directory to save log', type=str, default='new_log')
+parser.add_argument('--lr', help='learning rate', type=float, default=0.00025)
+parser.add_argument('--use_sde', help='Whether to use generalized State Dependent Exploration (gSDE)', type=bool, default=True)
+parser.add_argument('--clip_range', help='clipping parameters', type=float, default=0.2)
+parser.add_argument('--batch_size', help='mini batch size', type=int, default=64)
+parser.add_argument('--n_steps', help='number of steps to run for each environment per update', type=int, default=800)
+parser.add_argument('--n_epochs', help='number of epochs when optimizing surrogate loss', type=int, default=20)
+parser.add_argument('--n_envs', help='number of env copies running in parallel', type=int, default=8)
+parser.add_argument('--sde_freq', help='SDE sample frequency', type=int, default=4)
 
-# Create log dir
-parent_dir = os.path.dirname(os.path.abspath(__file__))
+args = parser.parse_args()
 
-log_dir = os.path.join(parent_dir, "experiments/24Dec1")
-os.makedirs(log_dir, exist_ok=True)
+hp = HyperParameters()
+hp.env = args.env_name
+print("Training for Environment : ", hp.env)
+hp.logdir = args.log_dir
+print("log dir", args.log_dir)
+hp.learning_rate = args.lr
+hp.use_sde = args.use_sde
+hp.clip_range = args.clip_range
+hp.batch_size = args.batch_size
+hp.n_steps = args.n_steps
+hp.n_epochs = args.n_epochs
+hp.n_envs = args.n_envs
+hp.sde_sample_freq =args.sde_fre
 
-# Create and wrap the environment
-env = make_vec_env('mini_cheetah-v0', n_envs=8)
+args.log_dir = "./experiments/" + args.log_dir
+
+if os.path.isdir(args.log_dir) == False:
+    os.mkdir(args.log_dir)
+
+os.chdir(args.log_dir)
+log_dir = os.getcwd()
+
+if os.path.isdir('models') == False: os.mkdir('models')
+model_save_path = log_dir + "/models/model.zip"
+
+if os.path.isdir('logs') == False: os.mkdir('logs')
+tb_log_dir = log_dir + "/logs"
+
+hp.to_text('hyperparameters')
+
+env = make_vec_env(hp.env, n_envs=args.n_envs)
 env = VecNormalize(env, norm_obs=True, norm_reward=True,
                    clip_obs=10., clip_reward= 10.)
 
-env = VecMonitor(env, log_dir)
 
-model = PPO('MlpPolicy', env, learning_rate= 0.00025,gae_lambda=0.95,use_sde = True, n_epochs=20,
-            n_steps=800, clip_range=0.2, batch_size=64, sde_sample_freq=4 ,
-            tensorboard_log=log_dir)
-#Create the callback: check every 1000 steps
-callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
-# Train the agent
-time_steps = 1000000
-model.learn(total_timesteps=int(time_steps), callback=callback, tb_log_name="tb_log")
-current_model_path = os.path.join(log_dir, "trained_models/current_model")
-model.save(current_model_path)
+model = PPO('MlpPolicy', env = hp.env, learning_rate=hp.learning_rate,gae_lambda=0.95,use_sde = hp.use_sde, n_epochs=hp.n_epochs,
+            n_steps=hp.n_steps, clip_range=hp.clip_range, batch_size=hp.batch_size, sde_sample_freq=hp.sde_sample_freq,
+            tensorboard_log=tb_log_dir)
+
+time_steps = 10000
+model.learn(total_timesteps=int(time_steps), tb_log_name="tensorboard_file")
+model.save(model_save_path)
+print("model saved at ", model_save_path)
 stats_path = os.path.join(log_dir, "vec_normalize.pkl")
 env.save(stats_path)

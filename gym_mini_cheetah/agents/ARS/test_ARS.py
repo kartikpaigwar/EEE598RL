@@ -4,11 +4,18 @@ import gym_mini_cheetah
 import argparse
 import numpy as np
 
-policy = np.load("./experiments/23Dec1/iterations/best_policy.npy")
+'''
+Best Policies Folder
+20Dec5 Slow Trot
+20Dec9 Jumping gait
+23Dec2 Fast Trot
+'''
+
+policy = np.load("./experiments/23Dec2/iterations/best_policy.npy")
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=800)
+	parser.add_argument('--EpisodeLength', help='number of gait steps of a episode', type=int, default=1800)
 	args = parser.parse_args()
 
 	env = gym.make("mini_cheetah-v0", render= True, on_rack=False, end_steps = args.EpisodeLength)

@@ -154,7 +154,7 @@ class MiniCheetah():
 
         return joint_name_to_id, motor_id_list
 
-    def ResetLegs(self, reset_duration=150):
+    def ResetLegs(self, reset_duration=200):
         """
         function to reset abduction, hip and knee joints' in standing posture
         Args:

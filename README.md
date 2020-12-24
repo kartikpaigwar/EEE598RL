@@ -1,5 +1,10 @@
 ## Gym Environment for MIT Mini Cheetah
 ### Introduction
+<p align="center">
+   <img width="300" height="193" src="https://github.com/kartikpaigwar/MiniCheetahRL/blob/master/media/slow-trot.gif">
+   <img width="300" height="193" src="https://github.com/kartikpaigwar/MiniCheetahRL/blob/master/media/jump-gait2.gif">
+   <img width="300" height="193" src="https://github.com/kartikpaigwar/MiniCheetahRL/blob/master/media/fast-trot.gif">
+</p>
 This package consists of a customized gym environment for MIT Mini Cheetah created using PyBullet. It currently supports Stable Baselines 3 and Augmented Random Search (ARS) to train Reinforcement Learning (RL) agents for locomotion on flat terrain. A few pretrained RL agents with tuned hyperparameters are demonstrated.
 
 ### Getting Started:

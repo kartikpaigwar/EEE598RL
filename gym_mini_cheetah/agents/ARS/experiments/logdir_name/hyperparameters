@@ -1,7 +1,0 @@
-learning_rate: 0.05
-noise: 0.03
-env_name: mini_cheetah-v0
-episode_length: 800
-direction ratio: 2.0
-policy initialization: 1
-
