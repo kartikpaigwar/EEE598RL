@@ -1,6 +1,7 @@
 import os
 
 import gym
+import gym_mini_cheetah
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -12,6 +13,7 @@ from stable_baselines3.common.results_plotter import load_results, ts2xy
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+from utils.vec_monitor import VecMonitor
 
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):
@@ -28,7 +30,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         super(SaveOnBestTrainingRewardCallback, self).__init__(verbose)
         self.check_freq = check_freq
         self.log_dir = log_dir
-        self.save_path = os.path.join(log_dir, 'best_model')
+        self.save_path = os.path.join(log_dir, 'trained_models')
         self.best_mean_reward = -np.inf
 
     def _init_callback(self) -> None:
@@ -54,29 +56,32 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
                   # Example for saving best model
                   if self.verbose > 0:
                     print("Saving new best model to {}".format(self.save_path))
-                  self.model.save(self.save_path)
+                  self.model.save(self.save_path + "/best_model")
 
         return True
 
 # Create log dir
-log_dir = "experiments/"
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+
+log_dir = os.path.join(parent_dir, "experiments/24Dec1")
 os.makedirs(log_dir, exist_ok=True)
 
 # Create and wrap the environment
-env = make_vec_env('mini_cheetah-v0', n_envs=8)
+env = make_vec_env('mini_cheetah-v0', n_envs=4)
 env = VecNormalize(env, norm_obs=True, norm_reward=True,
                    clip_obs=10., clip_reward= 10.)
 
-env = Monitor(env, log_dir)
+env = VecMonitor(env, log_dir)
 
 model = PPO('MlpPolicy', env, learning_rate= 0.00025,gae_lambda=0.95,use_sde = True, n_epochs=20,
             n_steps=800, clip_range=0.2, batch_size=64, sde_sample_freq=4 ,
-            tensorboard_log="./experiments/ppo_mini_cheetah/")
+            tensorboard_log=log_dir)
 #Create the callback: check every 1000 steps
 callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
 # Train the agent
 time_steps = 1000000
-model.learn(total_timesteps=int(time_steps), callback=callback)
-
-results_plotter.plot_results([log_dir], time_steps, results_plotter.X_TIMESTEPS, "PPO MiniCheetah")
-plt.show()
+model.learn(total_timesteps=int(time_steps), callback=callback, tb_log_name="tb_log")
+current_model_path = os.path.join(log_dir, "trained_models/current_model")
+model.save(current_model_path)
+stats_path = os.path.join(log_dir, "vec_normalize.pkl")
+env.save(stats_path)
