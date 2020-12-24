@@ -67,7 +67,7 @@ log_dir = os.path.join(parent_dir, "experiments/24Dec1")
 os.makedirs(log_dir, exist_ok=True)
 
 # Create and wrap the environment
-env = make_vec_env('mini_cheetah-v0', n_envs=4)
+env = make_vec_env('mini_cheetah-v0', n_envs=8)
 env = VecNormalize(env, norm_obs=True, norm_reward=True,
                    clip_obs=10., clip_reward= 10.)
 
