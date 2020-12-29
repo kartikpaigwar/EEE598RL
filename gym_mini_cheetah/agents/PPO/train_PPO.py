@@ -6,6 +6,8 @@ from stable_baselines3 import PPO
 from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+from stable_baselines3.common.callbacks import CheckpointCallback
+
 
 class HyperParameters():
     """
@@ -70,7 +72,7 @@ hp.batch_size = args.batch_size
 hp.n_steps = args.n_steps
 hp.n_epochs = args.n_epochs
 hp.n_envs = args.n_envs
-hp.sde_sample_freq =args.sde_fre
+hp.sde_sample_freq =args.sde_freq
 
 args.log_dir = "./experiments/" + args.log_dir
 
@@ -97,8 +99,10 @@ model = PPO('MlpPolicy', env = hp.env, learning_rate=hp.learning_rate,gae_lambda
             n_steps=hp.n_steps, clip_range=hp.clip_range, batch_size=hp.batch_size, sde_sample_freq=hp.sde_sample_freq,
             tensorboard_log=tb_log_dir)
 
-time_steps = 10000
-model.learn(total_timesteps=int(time_steps), tb_log_name="tensorboard_file")
+checkpoint_callback = CheckpointCallback(save_freq=12800, save_path=log_dir + "/models/",
+                                         name_prefix='policy')
+time_steps = 500000
+model.learn(total_timesteps=int(time_steps), callback= checkpoint_callback, tb_log_name="tensorboard_file")
 model.save(model_save_path)
 print("model saved at ", model_save_path)
 stats_path = os.path.join(log_dir, "vec_normalize.pkl")
