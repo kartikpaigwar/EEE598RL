@@ -1,6 +1,0 @@
-gym
-pybullet
-stable-baselines3
-matplotlib
-dataclasses
-tensorboard
