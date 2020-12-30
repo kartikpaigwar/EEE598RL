@@ -113,11 +113,11 @@ class MiniCheetahEnv(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.24
+        desired_height = 0.26   #0.24
 
-        roll_reward = np.exp(-20 * ((RPY[0]) ** 2))
-        pitch_reward = np.exp(-35 * ((RPY[1]) ** 2))
-        height_reward = np.exp(-350 * (desired_height - current_height) ** 2)
+        roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
+        pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
+        height_reward = np.exp(-500 * (desired_height - current_height) ** 2)  #350
 
         #Calculate distance moved along x direction from its last position
         x = pos[0]

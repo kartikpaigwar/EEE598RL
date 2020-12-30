@@ -101,7 +101,7 @@ model = PPO('MlpPolicy', env = hp.env, learning_rate=hp.learning_rate,gae_lambda
 
 checkpoint_callback = CheckpointCallback(save_freq=12800, save_path=log_dir + "/models/",
                                          name_prefix='policy')
-time_steps = 500000
+time_steps = 800000
 model.learn(total_timesteps=int(time_steps), callback= checkpoint_callback, tb_log_name="tensorboard_file")
 model.save(model_save_path)
 print("model saved at ", model_save_path)
