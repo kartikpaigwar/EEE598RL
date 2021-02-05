@@ -1,1 +1,2 @@
 from gym_mini_cheetah.envs.mini_cheetah_env import MiniCheetahEnv
+from gym_mini_cheetah.envs.mini_cheetah_env1 import MiniCheetahEnv1

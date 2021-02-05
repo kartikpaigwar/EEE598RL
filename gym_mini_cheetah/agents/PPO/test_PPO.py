@@ -15,7 +15,7 @@ args.log_dir = "./experiments/" + args.log_dir
 
 env = DummyVecEnv([lambda: gym.make(args.env_name, render =True)])
 env = VecNormalize.load(args.log_dir + "/vec_normalize.pkl", env)
-model = PPO.load(args.log_dir + "/models/model.zip")
+model = PPO.load(args.log_dir + "/models/best_model.zip")
 
 env.training = False
 env.norm_reward = False

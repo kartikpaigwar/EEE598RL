@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c9c4301f-6090-4a26-8070-f85ba2a7f007" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1non3L7OWYl2QNR44HiRXDrDrx9" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/gym_mini_cheetah/envs" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="ReaderModeSettings">
+    <option name="enabled" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/gym_mini_cheetah/envs" />
+      <recent name="$PROJECT_DIR$/gym_mini_cheetah/terrain_configs" />
+      <recent name="$PROJECT_DIR$/utils" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/gym_mini_cheetah/terrain_configs/10cmgaps" />
+      <recent name="$PROJECT_DIR$/gym_mini_cheetah/envs" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c9c4301f-6090-4a26-8070-f85ba2a7f007" name="Default Changelist" comment="" />
+      <created>1612065111109</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1612065111109</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>

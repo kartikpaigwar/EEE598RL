@@ -337,6 +337,8 @@ class MiniCheetah():
 
         done = False
         debug = False    # Debug with True for better intuition of the performance during the training
+        penalty = 0
+
         pos, orientation = self.GetBasePosAndOrientation()
         RPY = self._pybullet_client.getEulerFromQuaternion(orientation)
 
@@ -358,12 +360,35 @@ class MiniCheetah():
                     print('Robot was too high! Terminated')
                 done = True
 
-            if pos[2] < 0.08:
+            if pos[2] < 0.14:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
 
-        return done
+            shank_contacts = self.check_shank_contact()
+            penalty = sum(shank_contacts)/12.0
+            if debug:
+                print("Shank_touch penalty : ", penalty)
+
+        return done, penalty
+
+    def check_shank_contact(self):
+        '''
+        Retrieve foot contact information with the supporting ground and any special structure (wedge/stairs).
+        Ret:
+            foot_contact_info : 8 dimensional binary array, first four values denote contact information of feet [FR, FL, BR, BL] with the ground
+            while next four with the special structure.
+        '''
+        shank_ids = [2,6,10,14]
+        shank_contact_info = np.zeros(4)
+
+        for idx in range(4):
+            contact_points_with_ground = self._pybullet_client.getContactPoints(self.plane, self.MiniCheetah, -1, shank_ids[idx])
+            if len(contact_points_with_ground) > 0:
+                shank_contact_info[idx] = 1
+
+        return shank_contact_info
+
 
     def render(self, mode="rgb_array", close=False):
         """
