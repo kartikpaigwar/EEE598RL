@@ -7,6 +7,7 @@ from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from stable_baselines3.common.callbacks import CheckpointCallback
+from stable_baselines3.common.callbacks import EvalCallback
 
 
 class HyperParameters():
@@ -54,7 +55,7 @@ parser.add_argument('--use_sde', help='Whether to use generalized State Dependen
 parser.add_argument('--clip_range', help='clipping parameters', type=float, default=0.2)
 parser.add_argument('--batch_size', help='mini batch size', type=int, default=64)
 parser.add_argument('--n_steps', help='number of steps to run for each environment per update', type=int, default=800)
-parser.add_argument('--n_epochs', help='number of epochs when optimizing surrogate loss', type=int, default=20)
+parser.add_argument('--n_epochs', help='number of epochs when optimizing surrogate loss', type=int, default=16)
 parser.add_argument('--n_envs', help='number of env copies running in parallel', type=int, default=8)
 parser.add_argument('--sde_freq', help='SDE sample frequency', type=int, default=4)
 
@@ -101,8 +102,14 @@ model = PPO('MlpPolicy', env = hp.env, learning_rate=hp.learning_rate,gae_lambda
 
 checkpoint_callback = CheckpointCallback(save_freq=12800, save_path=log_dir + "/models/",
                                          name_prefix='policy')
+
+eval_env = make_vec_env(hp.env, n_envs=1)
+
+eval_callback = EvalCallback(eval_env, best_model_save_path=log_dir + "/models/",
+                             log_path=log_dir + "/logs/", eval_freq=6400, n_eval_episodes = 1,
+                             deterministic=True, render=False)
 time_steps = 800000
-model.learn(total_timesteps=int(time_steps), callback= checkpoint_callback, tb_log_name="tensorboard_file")
+model.learn(total_timesteps=int(time_steps), callback=eval_callback, tb_log_name="tensorboard_file")
 model.save(model_save_path)
 print("model saved at ", model_save_path)
 stats_path = os.path.join(log_dir, "vec_normalize.pkl")
