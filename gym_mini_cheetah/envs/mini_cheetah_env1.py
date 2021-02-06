@@ -117,7 +117,7 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.28
+        desired_height = 0.24
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35

@@ -51,7 +51,7 @@ class MiniCheetah():
 
         self._kp = 300                 #Position Gain
         self._kd = 20                  #Velocity Gain
-        self.motor_strength = 15       #Peak Torque
+        self.motor_strength = 17       #Peak Torque
 
         #Rendering Camera Parameters
         self._cam_dist = 1.3
@@ -355,12 +355,12 @@ class MiniCheetah():
                     print('Oops, Robot doing wheely! Terminated')
                 done = True
 
-            if pos[2] > 0.5:
+            if pos[2] > 0.4:
                 if debug:
                     print('Robot was too high! Terminated')
                 done = True
 
-            if pos[2] < 0.14:
+            if pos[2] < 0.15:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
