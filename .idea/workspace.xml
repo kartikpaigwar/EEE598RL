@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

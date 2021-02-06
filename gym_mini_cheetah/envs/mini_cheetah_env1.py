@@ -84,7 +84,7 @@ class MiniCheetahEnv1(gym.Env):
         :return: None
         """
         action = np.clip(action, -1, 1)
-        action[:4] = action[:4] * math.radians(40) - math.radians(50)
+        action[:4] = action[:4] * math.radians(30) - math.radians(45)
         action[4:] = (action[4:] + 1) / 2 * math.radians(60) + math.radians(50)
 
         for leg in self.mini_cheetah.legs:
@@ -117,7 +117,7 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.24
+        desired_height = 0.25
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
