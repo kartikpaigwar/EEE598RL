@@ -84,7 +84,7 @@ class MiniCheetahEnv1(gym.Env):
         :return: None
         """
         action = np.clip(action, -1, 1)
-        action[:4] = action[:4] * math.radians(30) - math.radians(45)
+        action[:4] = action[:4] * math.radians(30) - math.radians(30)
         action[4:] = (action[4:] + 1) / 2 * math.radians(60) + math.radians(45)
 
         for leg in self.mini_cheetah.legs:
@@ -117,7 +117,7 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.25
+        desired_height = 0.26
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
@@ -127,7 +127,7 @@ class MiniCheetahEnv1(gym.Env):
         x_l = self.mini_cheetah._last_base_position[0]
         self.mini_cheetah._last_base_position = pos
         step_distance_x = (x - x_l)
-        step_distance_x_reward = np.clip(200*step_distance_x,-1,1) #clip reward between [-1,1]
+        step_distance_x_reward = np.clip(250*step_distance_x,-1,1) #clip reward between [-1,1]
 
         # Penalize if the robot remains standstill
         penalty = 0
