@@ -85,7 +85,7 @@ class MiniCheetahEnv1(gym.Env):
         """
         action = np.clip(action, -1, 1)
         action[:4] = action[:4] * math.radians(30) - math.radians(45)
-        action[4:] = (action[4:] + 1) / 2 * math.radians(60) + math.radians(50)
+        action[4:] = (action[4:] + 1) / 2 * math.radians(60) + math.radians(45)
 
         for leg in self.mini_cheetah.legs:
             leg.abduction_motor_angle = 0
@@ -140,7 +140,7 @@ class MiniCheetahEnv1(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     step_distance_x_reward - penalty
+                     step_distance_x_reward - penalty - system_penalty
 
         return reward, done
 

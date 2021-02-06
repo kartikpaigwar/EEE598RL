@@ -5,11 +5,12 @@ from dataclasses import dataclass
 from collections import namedtuple
 import utils.bullet_client as bullet_client
 import pybullet_data
+import os
 
 @dataclass
 class leg_data:
     name: str
-    abduction_motor_id: int =0
+    abduction_motor_id: int = 0
     hip_motor_id: int = 0
     knee_motor_id: int = 0
     toe_joint_id: int = 0
@@ -27,7 +28,10 @@ class MiniCheetah():
                  render=False,
                  on_rack=False,
                  end_steps=800,
+                 default=False
                  ):
+
+        self.default_urdf = default
 
         self._is_render = render
         self._on_rack = on_rack
@@ -86,9 +90,14 @@ class MiniCheetah():
         self._pybullet_client.changeVisualShape(self.plane, -1, rgbaColor=[1, 1, 1, 0.9])
         self._pybullet_client.setGravity(0, 0, -9.8)
 
-        self.MiniCheetah = self._pybullet_client.loadURDF(
-            "%s/mini_cheetah/mini_cheetah.urdf" % pybullet_data.getDataPath(), self.INIT_POSITION,
-            self.INIT_ORIENTATION)
+        if self.default_urdf:
+            self.MiniCheetah = self._pybullet_client.loadURDF(
+                "%s/mini_cheetah/mini_cheetah.urdf" % pybullet_data.getDataPath(), self.INIT_POSITION,
+                self.INIT_ORIENTATION)
+        else:
+            robot_urdf_path = os.path.realpath("../../urdf/mini_cheetah_simple.urdf")
+            self.MiniCheetah = self._pybullet_client.loadURDF(robot_urdf_path, self.INIT_POSITION,
+                                                              self.INIT_ORIENTATION)
 
         self._joint_name_to_id, self._motor_id_list = self.BuildMotorIdList()
 
@@ -122,6 +131,13 @@ class MiniCheetah():
         """
         self.num_joints = self._pybullet_client.getNumJoints(self.MiniCheetah)
         joint_name_to_id = {}
+
+        if self.default_urdf:
+            toe_joint = ["toe_fr_joint", "toe_fl_joint", "toe_hr_joint", "toe_hl_joint"]
+        else:
+            toe_joint = ["fixed_shank_to_foot_fr", "fixed_shank_to_foot", "fixed_shank_to_foot_hr",
+                         "fixed_shank_to_foot_hl"]
+
         for i in range(self.num_joints):
             joint_info = self._pybullet_client.getJointInfo(self.MiniCheetah, i)
             joint_name_to_id[joint_info[1].decode("UTF-8")] = joint_info[0]
@@ -129,22 +145,22 @@ class MiniCheetah():
         self.front_right.abduction_motor_id = joint_name_to_id["torso_to_abduct_fr_j"]
         self.front_right.hip_motor_id = joint_name_to_id["abduct_fr_to_thigh_fr_j"]
         self.front_right.knee_motor_id = joint_name_to_id["thigh_fr_to_knee_fr_j"]
-        self.front_right.toe_joint_id = joint_name_to_id["toe_fr_joint"]
+        self.front_right.toe_joint_id = joint_name_to_id[toe_joint[0]]
 
         self.front_left.abduction_motor_id = joint_name_to_id["torso_to_abduct_fl_j"]
         self.front_left.hip_motor_id = joint_name_to_id["abduct_fl_to_thigh_fl_j"]
         self.front_left.knee_motor_id = joint_name_to_id["thigh_fl_to_knee_fl_j"]
-        self.front_left.toe_joint_id = joint_name_to_id["toe_fl_joint"]
+        self.front_left.toe_joint_id = joint_name_to_id[toe_joint[1]]
 
         self.back_right.abduction_motor_id = joint_name_to_id["torso_to_abduct_hr_j"]
         self.back_right.hip_motor_id = joint_name_to_id["abduct_hr_to_thigh_hr_j"]
         self.back_right.knee_motor_id = joint_name_to_id["thigh_hr_to_knee_hr_j"]
-        self.back_right.toe_joint_id = joint_name_to_id["toe_hr_joint"]
+        self.back_right.toe_joint_id = joint_name_to_id[toe_joint[2]]
 
         self.back_left.abduction_motor_id = joint_name_to_id["torso_to_abduct_hl_j"]
         self.back_left.hip_motor_id = joint_name_to_id["abduct_hl_to_thigh_hl_j"]
         self.back_left.knee_motor_id = joint_name_to_id["thigh_hl_to_knee_hl_j"]
-        self.back_left.toe_joint_id = joint_name_to_id["toe_hl_joint"]
+        self.back_left.toe_joint_id = joint_name_to_id[toe_joint[3]]
 
         motor_id_list = []
         for leg in self.legs:
@@ -355,7 +371,7 @@ class MiniCheetah():
                     print('Oops, Robot doing wheely! Terminated')
                 done = True
 
-            if pos[2] > 0.4:
+            if pos[2] > 0.45:
                 if debug:
                     print('Robot was too high! Terminated')
                 done = True
@@ -366,7 +382,7 @@ class MiniCheetah():
                 done = True
 
             shank_contacts = self.check_shank_contact()
-            penalty = sum(shank_contacts)/12.0
+            penalty = penalty + sum(shank_contacts)/8.0
             if debug:
                 print("Shank_touch penalty : ", penalty)
 
