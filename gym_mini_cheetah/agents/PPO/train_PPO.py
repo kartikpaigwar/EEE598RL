@@ -97,7 +97,7 @@ env = VecNormalize(env, norm_obs=True, norm_reward=True,
 
 
 model = PPO('MlpPolicy', env = hp.env, learning_rate=hp.learning_rate,gae_lambda=0.95,use_sde = hp.use_sde, n_epochs=hp.n_epochs,
-            n_steps=hp.n_steps, clip_range=hp.clip_range, batch_size=hp.batch_size, sde_sample_freq=hp.sde_sample_freq,
+            n_steps=hp.n_steps, clip_range=hp.clip_range, device="cuda", batch_size=hp.batch_size, sde_sample_freq=hp.sde_sample_freq,
             tensorboard_log=tb_log_dir)
 
 checkpoint_callback = CheckpointCallback(save_freq=12800, save_path=log_dir + "/models/",
