@@ -140,7 +140,7 @@ class MiniCheetahEnv1(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     step_distance_x_reward - penalty - system_penalty
+                     step_distance_x_reward - penalty #- system_penalty
 
         return reward, done
 

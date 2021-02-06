@@ -89,6 +89,8 @@ model_save_path = log_dir + "/models/model.zip"
 if os.path.isdir('logs') == False: os.mkdir('logs')
 tb_log_dir = log_dir + "/logs"
 
+os.chdir("../../")
+
 hp.to_text('hyperparameters')
 
 env = make_vec_env(hp.env, n_envs=args.n_envs)

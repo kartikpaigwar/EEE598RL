@@ -28,7 +28,7 @@ class MiniCheetah():
                  render=False,
                  on_rack=False,
                  end_steps=800,
-                 default=False
+                 default=True
                  ):
 
         self.default_urdf = default
@@ -376,7 +376,7 @@ class MiniCheetah():
                     print('Robot was too high! Terminated')
                 done = True
 
-            if pos[2] < 0.15:
+            if pos[2] < 0.18:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
