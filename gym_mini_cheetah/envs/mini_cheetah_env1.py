@@ -136,7 +136,7 @@ class MiniCheetahEnv1(gym.Env):
 
         # Penalize if the robot remains standstill
         penalty = 0
-        if abs(step_distance_x) <= 0.00008:
+        if abs(step_distance_x) <= 0.00007:
             penalty = 3
 
         # Check if episode terminates
