@@ -55,7 +55,7 @@ class MiniCheetah():
 
         self._kp = 300                 #Position Gain
         self._kd = 20                  #Velocity Gain
-        self.motor_strength = 17       #Peak Torque
+        self.motor_strength = 15       #Peak Torque
 
         #Rendering Camera Parameters
         self._cam_dist = 1.3
@@ -376,13 +376,15 @@ class MiniCheetah():
                     print('Robot was too high! Terminated')
                 done = True
 
-            if pos[2] < 0.18:
+            if pos[2] < 0.12:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
+            if pos[2] > 0.12 and pos[2]< 20:
+                penalty = 0.3
 
             shank_contacts = self.check_shank_contact()
-            penalty = penalty + sum(shank_contacts)/8.0
+            #penalty = penalty + sum(shank_contacts)/8.0
             if debug:
                 print("Shank_touch penalty : ", penalty)
 
