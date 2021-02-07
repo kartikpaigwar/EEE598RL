@@ -54,7 +54,7 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY, 4)
         ang_vel = self.mini_cheetah.GetBaseAngularVelocity()
         lin_vel = self.mini_cheetah.GetBaseLinearVelocity()
-        obs = np.concatenate(([pos[2]], lin_vel, [ang_vel[0], ang_vel[1]], [RPY[0], RPY[1]])).ravel()
+        obs = np.concatenate(([pos[2]], lin_vel, [ang_vel[0], ang_vel[1], ang_vel[2]], [RPY[0], RPY[1], RPY[2]])).ravel()
 
         return obs
 
@@ -112,7 +112,7 @@ class MiniCheetahEnv1(gym.Env):
         """
 
         pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
-
+        base_vel = self.mini_cheetah.GetBaseLinearVelocity()
         RPY_orig = pybullet.getEulerFromQuaternion(ori)
         RPY = np.round(RPY_orig, 4)
 
@@ -121,13 +121,17 @@ class MiniCheetahEnv1(gym.Env):
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
+        yaw_reward = np.exp(-25 * ((RPY[2]) ** 2))   #35
         height_reward = np.exp(-600 * (desired_height - current_height) ** 2)  #350
+        zvel_reward = np.exp(-1.5*(base_vel[2]**2))
+        print(zvel_reward)
+
         #Calculate distance moved along x direction from its last position
         x = pos[0]
         x_l = self.mini_cheetah._last_base_position[0]
         self.mini_cheetah._last_base_position = pos
         step_distance_x = (x - x_l)
-        step_distance_x_reward = np.clip(200*step_distance_x,-2,2) #clip reward between [-1,1]
+        step_distance_x_reward = np.clip(200*step_distance_x,-1,1) #clip reward between [-1,1]
 
         # Penalize if the robot remains standstill
         penalty = 0
@@ -140,7 +144,7 @@ class MiniCheetahEnv1(gym.Env):
             reward = 0
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
-                     step_distance_x_reward - penalty - system_penalty
+                     round(yaw_reward, 4) + round(zvel_reward, 4) + step_distance_x_reward - penalty - system_penalty
 
         return reward, done
 

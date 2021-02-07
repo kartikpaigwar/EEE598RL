@@ -3,7 +3,41 @@
   <component name="ChangeListManager">
     <list default="true" id="c9c4301f-6090-4a26-8070-f85ba2a7f007" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/hyperparameters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/logs/tensorboard_file_1/events.out.tfevents.1612525162.improbable008.28565.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan1/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/hyperparameters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/logs/tensorboard_file_1/events.out.tfevents.1612525502.improbable008.28662.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan2/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/hyperparameters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/logs/tensorboard_file_1/events.out.tfevents.1612581834.improbable008.13521.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan3/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/hyperparameters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/logs/tensorboard_file_1/events.out.tfevents.1612595538.improbable008.27943.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan4/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/hyperparameters" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/logs/tensorboard_file_1/events.out.tfevents.1612607161.improbable008.1996.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan5/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan6/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan6/logs/tensorboard_file_1/events.out.tfevents.1612612095.improbable008.7577.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan6/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan6/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/5Jan6/vec_normalize.pkl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" afterDir="false" />
     </list>

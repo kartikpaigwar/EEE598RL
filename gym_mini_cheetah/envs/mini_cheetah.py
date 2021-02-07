@@ -375,18 +375,20 @@ class MiniCheetah():
                 if debug:
                     print('Robot was too high! Terminated')
                 done = True
+            if 0.3 < pos[2] < 0.45:
+                penalty += 0.3
 
-            if pos[2] < 0.12:
+            if pos[2] < 0.10:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
-            if pos[2] > 0.12 and pos[2]< 20:
-                penalty = 0.3
+            if 0.1 < pos[2] < 0.2:
+                penalty += 0.3
 
-            shank_contacts = self.check_shank_contact()
+            #shank_contacts = self.check_shank_contact()
             #penalty = penalty + sum(shank_contacts)/8.0
-            if debug:
-                print("Shank_touch penalty : ", penalty)
+            # if debug:
+            #     print("Shank_touch penalty : ", penalty)
 
         return done, penalty
 
