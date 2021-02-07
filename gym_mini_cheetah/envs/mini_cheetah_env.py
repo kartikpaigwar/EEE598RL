@@ -108,7 +108,6 @@ class MiniCheetahEnv(gym.Env):
         """
 
         pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
-
         RPY_orig = pybullet.getEulerFromQuaternion(ori)
         RPY = np.round(RPY_orig, 4)
 
