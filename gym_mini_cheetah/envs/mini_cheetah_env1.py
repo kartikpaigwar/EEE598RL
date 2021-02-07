@@ -19,12 +19,12 @@ class MiniCheetahEnv1(gym.Env):
 
         self._action_dim = 8
 
-        self._obs_dim = 8
+        self._obs_dim = 10
 
         self.action = np.zeros(self._action_dim)
 
-        observation_low = np.array([0, 0, -1, -0.5, -np.pi / 2, -np.pi / 2, -np.pi / 2, -np.pi / 2])
-        observation_high = np.array([0.5, 3, 1, 0.5, np.pi / 2, np.pi / 2, np.pi / 2, np.pi / 2])
+        observation_low = np.array([0, 0, -1, -0.5, -np.pi / 2, -np.pi/2, -np.pi/2, -np.pi / 2, -np.pi / 2, -np.pi / 2])
+        observation_high = np.array([0.5, 3, 1, 0.5, np.pi / 2, np.pi / 2, np.pi/2, np.pi/2, np.pi / 2, np.pi / 2])
         self.observation_space = spaces.Box(observation_low, observation_high)
 
         action_high = np.array([1] * self._action_dim)
@@ -124,7 +124,6 @@ class MiniCheetahEnv1(gym.Env):
         yaw_reward = np.exp(-25 * ((RPY[2]) ** 2))   #35
         height_reward = np.exp(-600 * (desired_height - current_height) ** 2)  #350
         zvel_reward = np.exp(-1.5*(base_vel[2]**2))
-        print(zvel_reward)
 
         #Calculate distance moved along x direction from its last position
         x = pos[0]

@@ -110,7 +110,7 @@ eval_env = make_vec_env(hp.env, n_envs=1)
 eval_callback = EvalCallback(eval_env, best_model_save_path=log_dir + "/models/",
                              log_path=log_dir + "/logs/", eval_freq=6400, n_eval_episodes = 1,
                              deterministic=True, render=False)
-time_steps = 800000
+time_steps = 1500000
 model.learn(total_timesteps=int(time_steps), callback=eval_callback, tb_log_name="tensorboard_file")
 model.save(model_save_path)
 print("model saved at ", model_save_path)
