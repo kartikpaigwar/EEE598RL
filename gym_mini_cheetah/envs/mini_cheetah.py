@@ -350,7 +350,7 @@ class MiniCheetah():
             self.shank_contacts = self.check_shank_contact()
 
             self._pybullet_client.stepSimulation()
-        self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, self.GetBasePosAndOrientation()[0])
+            self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, self.GetBasePosAndOrientation()[0])
         self._n_steps += 1
 
     def _termination(self):
