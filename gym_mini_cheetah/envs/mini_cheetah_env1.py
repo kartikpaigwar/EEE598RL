@@ -124,7 +124,7 @@ class MiniCheetahEnv1(gym.Env):
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
         yaw_reward = np.exp(-20 * ((RPY[2]) ** 2))   #35
         height_reward = np.exp(-600 * (desired_height - current_height) ** 2)  #350
-        zvel_reward = np.exp(-1.5*(base_vel[2]**2))
+        zvel_reward = 0 #np.exp(-1.5*(base_vel[2]**2))
         xvel_reward = np.exp(-5 * ((desired_vel - base_vel[0]) ** 2))
         #Calculate distance moved along x direction from its last position
         x = pos[0]

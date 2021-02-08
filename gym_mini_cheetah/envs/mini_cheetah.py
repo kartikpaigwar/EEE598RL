@@ -88,6 +88,8 @@ class MiniCheetah():
 
         self.plane = self._pybullet_client.loadURDF("%s/plane.urdf" % pybullet_data.getDataPath())
         self._pybullet_client.changeVisualShape(self.plane, -1, rgbaColor=[1, 1, 1, 0.9])
+        self._pybullet_client.changeDynamics(self.plane, -1, lateralFriction=1.0)
+
         self._pybullet_client.setGravity(0, 0, -9.8)
 
         if self.default_urdf:
