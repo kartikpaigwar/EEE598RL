@@ -117,7 +117,7 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-        desired_height = 0.283
+        desired_height = 0.288
         desired_vel = 1.1
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
@@ -135,7 +135,7 @@ class MiniCheetahEnv1(gym.Env):
 
         # Penalize if the robot remains standstill
         penalty = 0
-        if abs(step_distance_x) <= 0.00008:
+        if step_distance_x <= 0.00008:
             penalty = 3
 
         # Check if episode terminates
