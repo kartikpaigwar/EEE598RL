@@ -54,7 +54,7 @@ class MiniCheetah():
 
 
         self._kp = 300                 #Position Gain
-        self._kd = 15                  #Velocity Gain
+        self._kd = 20                  #Velocity Gain
         self.motor_strength = 15       #Peak Torque
 
         #Rendering Camera Parameters
@@ -336,8 +336,11 @@ class MiniCheetah():
         """
         motor_commands = self.GetMotorCommands()
         velocity_commands = np.zeros(12)
+        self.shank_contacts = np.zeros(4)
         for _ in range(self._frame_skip):
             applied_motor_torques = self._apply_pd_control(motor_commands, velocity_commands)
+            self.shank_contacts = self.check_shank_contact()
+
             self._pybullet_client.stepSimulation()
         self._n_steps += 1
 
@@ -371,22 +374,21 @@ class MiniCheetah():
                     print('Oops, Robot doing wheely! Terminated')
                 done = True
 
-            if pos[2] > 0.45:
+            if pos[2] > 0.5:
                 if debug:
                     print('Robot was too high! Terminated')
                 done = True
-            if 0.3 < pos[2] < 0.45:
+            if 0.37 < pos[2] < 0.5:
                 penalty += 0.5
 
             if pos[2] < 0.10:
                 if debug:
                     print('Robot was too low! Terminated')
                 done = True
-            if 0.1 < pos[2] < 0.18:
+            if 0.1 < pos[2] < 0.24:
                 penalty += 0.3
 
-            shank_contacts = self.check_shank_contact()
-            penalty = penalty + sum(shank_contacts)/4.0
+            penalty = penalty + sum(self.shank_contacts)/4.0
             if debug:
                 print("Shank_touch penalty : ", penalty)
 
@@ -400,14 +402,13 @@ class MiniCheetah():
             while next four with the special structure.
         '''
         shank_ids = [2,6,10,14]
-        shank_contact_info = np.zeros(4)
+        contact_dist = self._pybullet_client.getLinkStates(self.MiniCheetah, shank_ids)
 
         for idx in range(4):
-            contact_points_with_ground = self._pybullet_client.getContactPoints(self.plane, self.MiniCheetah, -1, shank_ids[idx])
-            if len(contact_points_with_ground) > 0:
-                shank_contact_info[idx] = 1
+            if contact_dist[idx][4][2] < 0.03:
+                self.shank_contacts[idx] = 1
 
-        return shank_contact_info
+        return self.shank_contacts
 
 
     def render(self, mode="rgb_array", close=False):
