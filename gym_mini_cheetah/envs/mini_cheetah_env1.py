@@ -11,11 +11,12 @@ class MiniCheetahEnv1(gym.Env):
     def __init__(self,
                  render=False,
                  on_rack=False,
-                 end_steps=800
+                 end_steps=800,
+                 save_path=None
                  ):
 
         import gym_mini_cheetah.envs.mini_cheetah as robot
-        self.mini_cheetah = robot.MiniCheetah(render=render, on_rack=on_rack,end_steps=end_steps)
+        self.mini_cheetah = robot.MiniCheetah(render=render, on_rack=on_rack,end_steps=end_steps, video_path=save_path)
 
         self._action_dim = 8
 

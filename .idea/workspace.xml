@@ -3,7 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="c9c4301f-6090-4a26-8070-f85ba2a7f007" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan4/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan4/logs/tensorboard_file_1/events.out.tfevents.1612743416.improbable008.32136.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan4/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan4/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan4/vec_normalize.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan7/logs/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan7/logs/tensorboard_file_1/events.out.tfevents.1612765069.improbable008.15024.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan7/models/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan7/models/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/experiments/6Jan7/vec_normalize.pkl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/agents/PPO/test_PPO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym_mini_cheetah/envs/mini_cheetah_env1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

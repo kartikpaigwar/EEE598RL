@@ -13,14 +13,20 @@ args = parser.parse_args()
 
 args.log_dir = "./experiments/" + args.log_dir
 
-env = DummyVecEnv([lambda: gym.make(args.env_name, render =True)])
+env = DummyVecEnv([lambda: gym.make(args.env_name, render=True, save_path=args.log_dir + "/run.MP4")])
 env = VecNormalize.load(args.log_dir + "/vec_normalize.pkl", env)
-model = PPO.load(args.log_dir + "/models/model.zip")
+model = PPO.load(args.log_dir + "/models/best_model.zip")
 
 env.training = False
 env.norm_reward = False
 
+# for i_episode in range(0,1):
 obs = env.reset()
-while True:
+for t in range(1000):
     action, _states = model.predict(obs,deterministic=True)
     obs, rewards, done, info = env.step(action)
+    if done:
+        print("Episode done")
+        break
+env.close()
+
