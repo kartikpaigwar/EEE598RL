@@ -3,7 +3,7 @@ learning_rate: 0.00035
 n_epochs: 20
 n_steps: 800
 n_envs: 16
-use_sde: False
+use_sde: True
 sde_sample_frequency: 4
 clip_range: 0.2
 batch_size: 64

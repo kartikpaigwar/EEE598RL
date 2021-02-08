@@ -117,8 +117,13 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
+<<<<<<< HEAD
         desired_height = 0.288
         desired_vel = 1.1
+=======
+        desired_height = 0.285
+        desired_vel = 0.8
+>>>>>>> 92944d038e2ffc46297aa10313ee0fba788f1980
 
         roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
@@ -131,7 +136,7 @@ class MiniCheetahEnv1(gym.Env):
         x_l = self.mini_cheetah._last_base_position[0]
         self.mini_cheetah._last_base_position = pos
         step_distance_x = (x - x_l)
-        step_distance_x_reward = np.clip(180*step_distance_x,-1,1) #clip reward between [-1,1]
+        step_distance_x_reward = np.clip(250*step_distance_x,-1,1) #clip reward between [-1,1]
 
         # Penalize if the robot remains standstill
         penalty = 0
