@@ -117,30 +117,26 @@ class MiniCheetahEnv1(gym.Env):
         RPY = np.round(RPY_orig, 4)
 
         current_height = round(pos[2], 5)
-<<<<<<< HEAD
-        desired_height = 0.288
-        desired_vel = 1.1
-=======
-        desired_height = 0.285
-        desired_vel = 0.8
->>>>>>> 92944d038e2ffc46297aa10313ee0fba788f1980
 
-        roll_reward = np.exp(-25 * ((RPY[0]) ** 2)) #20
+        desired_height = 0.28
+        desired_vel = 0.6
+
+        roll_reward = np.exp(-27 * ((RPY[0]) ** 2)) #20
         pitch_reward = np.exp(-40 * ((RPY[1]) ** 2))   #35
         yaw_reward = np.exp(-20 * ((RPY[2]) ** 2))   #35
-        height_reward = np.exp(-600 * (desired_height - current_height) ** 2)  #350
+        height_reward = np.exp(-900 * (desired_height - current_height) ** 2)  #350
         zvel_reward = 0 #np.exp(-1.5*(base_vel[2]**2))
-        xvel_reward = np.exp(-5 * ((desired_vel - base_vel[0]) ** 2))
+        xvel_reward = np.exp(-9 * ((desired_vel - base_vel[0]) ** 2))
         #Calculate distance moved along x direction from its last position
         x = pos[0]
         x_l = self.mini_cheetah._last_base_position[0]
         self.mini_cheetah._last_base_position = pos
         step_distance_x = (x - x_l)
-        step_distance_x_reward = np.clip(250*step_distance_x,-1,1) #clip reward between [-1,1]
+        step_distance_x_reward = np.clip(320*step_distance_x,-1,1) #clip reward between [-1,1]
 
         # Penalize if the robot remains standstill
         penalty = 0
-        if step_distance_x <= 0.00008:
+        if step_distance_x <= 0.00007:
             penalty = 3
 
         # Check if episode terminates
@@ -150,6 +146,7 @@ class MiniCheetahEnv1(gym.Env):
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
                      round(yaw_reward, 4) + round(xvel_reward, 4) + round(zvel_reward, 4) + step_distance_x_reward - penalty - system_penalty
+        #print("Xvel", height_reward, current_height, xvel_reward, base_vel[0], step_distance_x_reward)
         return reward, done
 
     def render(self, mode="rgb_array", close=False):
