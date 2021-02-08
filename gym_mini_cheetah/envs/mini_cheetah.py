@@ -28,7 +28,7 @@ class MiniCheetah():
                  render=False,
                  on_rack=False,
                  end_steps=800,
-                 default=True
+                 default=False
                  ):
 
         self.default_urdf = default
@@ -385,10 +385,10 @@ class MiniCheetah():
             if 0.1 < pos[2] < 0.18:
                 penalty += 0.3
 
-            #shank_contacts = self.check_shank_contact()
-            #penalty = penalty + sum(shank_contacts)/8.0
-            # if debug:
-            #     print("Shank_touch penalty : ", penalty)
+            shank_contacts = self.check_shank_contact()
+            penalty = penalty + sum(shank_contacts)/4.0
+            if debug:
+                print("Shank_touch penalty : ", penalty)
 
         return done, penalty
 
