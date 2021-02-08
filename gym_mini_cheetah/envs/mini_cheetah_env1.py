@@ -126,7 +126,6 @@ class MiniCheetahEnv1(gym.Env):
         height_reward = np.exp(-600 * (desired_height - current_height) ** 2)  #350
         zvel_reward = np.exp(-1.5*(base_vel[2]**2))
         xvel_reward = np.exp(-5 * ((desired_vel - base_vel[0]) ** 2))
-        print("curren height ", current_height)
         #Calculate distance moved along x direction from its last position
         x = pos[0]
         x_l = self.mini_cheetah._last_base_position[0]
@@ -146,7 +145,6 @@ class MiniCheetahEnv1(gym.Env):
         else:
             reward = round(pitch_reward, 4) + round(roll_reward, 4) + round(height_reward, 4) + \
                      round(yaw_reward, 4) + round(xvel_reward, 4) + round(zvel_reward, 4) + step_distance_x_reward - penalty - system_penalty
-            print(system_penalty)
         return reward, done
 
     def render(self, mode="rgb_array", close=False):
