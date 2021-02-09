@@ -20,12 +20,14 @@ class MiniCheetahEnv1(gym.Env):
 
         self._action_dim = 8
 
-        self._obs_dim = 10
+        self._obs_dim = 18
 
         self.action = np.zeros(self._action_dim)
+        motor_space_low = [-np.pi/3, np.pi/4, -np.pi/3, np.pi/4, -np.pi/3, np.pi/4, -np.pi/3, np.pi/4]
+        motor_space_high = [0, math.radians(105),0,math.radians(105),0,math.radians(105),0,math.radians(105)]
+        observation_low = np.array(motor_space_low + [0, 0, -1, -0.5, -np.pi / 2, -np.pi/2, -np.pi/2, -np.pi / 2, -np.pi / 2, -np.pi / 2])
+        observation_high = np.array(motor_space_high + [0.5, 3, 1, 0.5, np.pi / 2, np.pi / 2, np.pi/2, np.pi/2, np.pi / 2, np.pi / 2])
 
-        observation_low = np.array([0, 0, -1, -0.5, -np.pi / 2, -np.pi/2, -np.pi/2, -np.pi / 2, -np.pi / 2, -np.pi / 2])
-        observation_high = np.array([0.5, 3, 1, 0.5, np.pi / 2, np.pi / 2, np.pi/2, np.pi/2, np.pi / 2, np.pi / 2])
         self.observation_space = spaces.Box(observation_low, observation_high)
 
         action_high = np.array([1] * self._action_dim)
@@ -44,6 +46,29 @@ class MiniCheetahEnv1(gym.Env):
     def GetObservation(self):
         """
         This function returns the current observation of the environment for the interested task.
+        Obs_Dimension = 8 + 10
+
+        :return: [hip_knee_angles, robot_z_pos, lin_vel_x, lin_vel_y, lin_vel_z, roll rate, pitch rate, roll, pitch]
+        """
+
+        pos, ori = self.mini_cheetah.GetBasePosAndOrientation()
+        motor_angles = self.mini_cheetah.GetMotorAngles()
+        hip_knee_angles = []
+        for i in range(0, len(motor_angles)):
+            if i % 3 > 0:
+                hip_knee_angles.append(round(motor_angles[i], 6))
+        RPY = pybullet.getEulerFromQuaternion(ori)
+        RPY = np.round(RPY, 4)
+        ang_vel = self.mini_cheetah.GetBaseAngularVelocity()
+        lin_vel = self.mini_cheetah.GetBaseLinearVelocity()
+        obs = np.concatenate((hip_knee_angles, [pos[2]], lin_vel, [ang_vel[0], ang_vel[1], ang_vel[2]], [RPY[0], RPY[1], RPY[2]])).ravel()
+
+        return obs
+
+
+    def GetObservation_Orig(self):
+        """
+        This function returns the current observation of the environment for the interested task.
         Obs_Dimension = 8
 
         :return: [robot_z_pos, lin_vel_x, lin_vel_y, lin_vel_z, roll rate, pitch rate, roll, pitch]
@@ -58,6 +83,7 @@ class MiniCheetahEnv1(gym.Env):
         obs = np.concatenate(([pos[2]], lin_vel, [ang_vel[0], ang_vel[1], ang_vel[2]], [RPY[0], RPY[1], RPY[2]])).ravel()
 
         return obs
+
 
     def step(self, action):
         """
