@@ -401,8 +401,9 @@ class MiniCheetah():
             if debug:
                 print("Shank_touch penalty : ", penalty)
         if done:
-            self._pybullet_client.stopStateLogging(self.log_id)
-            print("Video Saved")
+            if self.video_path is not None:
+                self._pybullet_client.stopStateLogging(self.log_id)
+                print("Video Saved")
 
         return done, penalty
 
