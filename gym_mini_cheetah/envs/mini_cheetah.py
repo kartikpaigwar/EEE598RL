@@ -28,7 +28,8 @@ class MiniCheetah():
                  render=False,
                  on_rack=False,
                  end_steps=800,
-                 default=False
+                 default=False,
+                 video_path=None
                  ):
 
         self.default_urdf = default
@@ -60,7 +61,8 @@ class MiniCheetah():
         #Rendering Camera Parameters
         self._cam_dist = 1.3
         self._cam_yaw = 180
-        self._cam_pitch = -40
+        self._cam_pitch = -20
+        self.video_path = video_path
 
         #Instantiate dataclass for each leg [FR, FL, BR, BL]
         self.front_left = leg_data('fl')
@@ -112,6 +114,8 @@ class MiniCheetah():
 
         self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, [0, 0, 0])
 
+
+
     def reset_robot(self):
         """
         Reset robot in standing posture at initial position and orientation
@@ -123,6 +127,8 @@ class MiniCheetah():
         self.ResetLegs()
         self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, [0, 0, 0])
         self._n_steps = 0
+        if self.video_path is not None:
+            self.log_id = self._pybullet_client.startStateLogging(self._pybullet_client.STATE_LOGGING_VIDEO_MP4,self.video_path)
 
     def BuildMotorIdList(self):
         """
@@ -344,6 +350,7 @@ class MiniCheetah():
             self.shank_contacts = self.check_shank_contact()
 
             self._pybullet_client.stepSimulation()
+            self._pybullet_client.resetDebugVisualizerCamera(self._cam_dist, self._cam_yaw, self._cam_pitch, self.GetBasePosAndOrientation()[0])
         self._n_steps += 1
 
     def _termination(self):
@@ -393,6 +400,9 @@ class MiniCheetah():
             penalty = penalty + sum(self.shank_contacts)/4.0
             if debug:
                 print("Shank_touch penalty : ", penalty)
+        if done:
+            self._pybullet_client.stopStateLogging(self.log_id)
+            print("Video Saved")
 
         return done, penalty
 
