@@ -53,7 +53,7 @@ class MiniCheetah():
         self._last_base_position = [0, 0, 0]
 
 
-        self._kp = 300                 #Position Gain
+        self._kp = 250                 #Position Gain
         self._kd = 20                  #Velocity Gain
         self.motor_strength = 15       #Peak Torque
 
@@ -182,8 +182,8 @@ class MiniCheetah():
         for leg in self.legs:
             # Precalculated joints angle of each leg in standing position
             leg.abduction_motor_angle = 0
-            leg.hip_motor_angle = -1*math.radians(50)
-            leg.knee_motor_angle = math.radians(110)
+            leg.hip_motor_angle = -1*math.radians(45)
+            leg.knee_motor_angle = math.radians(95)
 
             self._pybullet_client.resetJointState(
                 self.MiniCheetah,
